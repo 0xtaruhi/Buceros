@@ -2,7 +2,7 @@
  * Description  : general definition
  * Author       : Zhengyi Zhang
  * Date         : 2021-11-25 16:36:53
- * LastEditTime : 2021-11-25 17:25:19
+ * LastEditTime : 2021-11-25 18:15:34
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\headers\define.v
  */
@@ -22,5 +22,11 @@
 `define REG_ADDR_W                          5
 `define RegAddrBus                          4:0
 `define REG_NUM                             32
+
+`define INST_W                              32
+`define InstAddrBus                         31:0
+
+// pc reg
+`define PC_RST_ADDR                         32'b0
 
 `endif // _DEFINE_V
