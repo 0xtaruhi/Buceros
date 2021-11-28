@@ -2,7 +2,7 @@
  * Description  : settings of the soc
  * Author       : Zhengyi Zhang
  * Date         : 2021-11-25 16:36:48
- * LastEditTime : 2021-11-25 17:53:56
+ * LastEditTime : 2021-11-28 13:17:19
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\headers\settings.v
  */
@@ -12,6 +12,4 @@
 
 `define ARCH_RV32
 // `define ARCH_RV64
-`define JTAG_ENABLE
-// `define JTAG_DISABLE
 `endif

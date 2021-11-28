@@ -2,7 +2,7 @@
  * Description  : Register
  * Author       : Zhengyi Zhang
  * Date         : 2021-11-25 16:40:59
- * LastEditTime : 2021-11-28 13:20:25
+ * LastEditTime : 2021-11-28 13:26:42
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\core\regfile.v
  */
@@ -11,7 +11,6 @@
 module regfile (
     input  wire               clk,
     input  wire               rst_n,
-    
     input  wire [`RegAddrBus] r_addr1_i,
     input  wire [`RegAddrBus] r_addr2_i,
     input  wire               w_en_i,
@@ -26,10 +25,10 @@ module regfile (
 
     assign r_data1_o = (r_addr1_i == w_addr_i) ? w_data_i : regfile[r_addr1_i];
     assign r_data2_o = (r_addr2_i == w_addr_i) ? w_data_i : regfile[r_addr2_i];
-    
     always @(*) begin
         regfile[0] = 0;             // x0 permanently be 0
     end
+
     genvar reg_idx;
     generate
         for(reg_idx=1;reg_idx<`REG_NUM;reg_idx=reg_idx+1) begin: loop_regfile
