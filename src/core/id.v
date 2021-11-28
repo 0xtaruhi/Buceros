@@ -21,5 +21,5 @@ module id (
     output wire [`RegAddrBus] rs2_addr_o,
     output wire [`RegDataBus] rs2_data_o
 );
-
+    
 endmodule //id

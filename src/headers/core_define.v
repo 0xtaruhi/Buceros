@@ -28,14 +28,11 @@
 
 // pc reg
 `define PC_RST_ADDR                         32'b0
-//rom register
-`define InstAddrBus 31:0
-`define InstBus 31:0 
 
+//ram register
 // id
 `define Funct3Bus                           2:0
 `define Funct7Bus                           6:0
 `define ImmBus                              31:0
 `define OpcodeBus                           6:0
-
 `endif // _DEFINE_V
