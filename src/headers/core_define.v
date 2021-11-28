@@ -28,6 +28,9 @@
 
 // pc reg
 `define PC_RST_ADDR                         32'b0
+//rom register
+`define InstAddrBus 31:0
+`define InstBus 31:0 
 
 // id
 `define Funct3Bus                           2:0

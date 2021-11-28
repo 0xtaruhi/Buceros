@@ -1,5 +1,10 @@
+`include "define.v"
 module rom (
-    input  wire                clk,
+    input addr_i,
+    input ce,
+    output addr_o,
+    output inst
 );
+    
     
 endmodule
