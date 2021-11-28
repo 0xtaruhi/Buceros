@@ -2,14 +2,14 @@
  * Description  : general definition
  * Author       : Zhengyi Zhang
  * Date         : 2021-11-25 16:36:53
- * LastEditTime : 2021-11-28 15:33:10
+ * LastEditTime : 2021-11-28 19:21:38
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\headers\core_define.v
  */
 
 `include "settings.v"
-`ifndef _DEFINE_V_
-`define _DEFINE_V_
+`ifndef _CORE_DEFINE_V_
+`define _CORE_DEFINE_V_
 
 `ifdef ARCH_RV32
     `define REG_DATA_W                      32
