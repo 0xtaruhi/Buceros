@@ -20,10 +20,10 @@ module rom (
     always @(posedge clk) begin
         if (ce) begin
             else if (we) begin
-                rom1[inst_i[31:2],11] <= data_i[31:24];
-                rom2[inst_i[31:2],10] <= data_i[23:16];
-                rom3[inst_i[31:2],01] <= data_i[15:8];
-                rom4[inst_i[31:2],00] <= data_i[7:0];
+                rom1[inst_i[31:2],11] <= inst_i[31:24];
+                rom2[inst_i[31:2],10] <= inst_i[23:16];
+                rom3[inst_i[31:2],01] <= inst_i[15:8];
+                rom4[inst_i[31:2],00] <= inst_i[7:0];
             end
             else begin
                 rom1[inst_i[31:2],11] <= rom1[inst_i[31:2],11];
