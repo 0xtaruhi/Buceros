@@ -2,11 +2,11 @@
  * Description  : Register
  * Author       : Zhengyi Zhang
  * Date         : 2021-11-25 16:40:59
- * LastEditTime : 2021-11-28 13:26:42
+ * LastEditTime : 2021-11-28 15:34:08
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\core\regfile.v
  */
-`include "../headers/define.v"
+`include "../headers/buceros_header.v"
 
 module regfile (
     input  wire               clk,

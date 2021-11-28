@@ -2,11 +2,11 @@
  * Description  : pc register
  * Author       : Zhengyi Zhang
  * Date         : 2021-11-25 16:39:51
- * LastEditTime : 2021-11-28 13:17:29
+ * LastEditTime : 2021-11-28 14:32:51
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\core\pc_reg.v
  */
-`include "../headers/define.v"
+`include "../headers/buceros_header.v"
 
 module pc_reg (
     input  wire                clk,
