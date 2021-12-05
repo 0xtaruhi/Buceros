@@ -54,8 +54,6 @@
 `define R_Type                              7'b0110011
 `define I_Type3                             7'b0001111
 `define I_Type4                             7'b1110011
-`endif // _DEFINE_V'b
-=======
 
 // ex
 `define INST_LUI                            7'b0110111
@@ -86,4 +84,4 @@
 `define INST_HALF_WORD_U                    3'b101
 
 `endif // _DEFINE_V
->>>>>>> 5539a327fc73013dd289de29a578fba0ad125d11
+
