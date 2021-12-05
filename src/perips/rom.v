@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 `include "buceros_header.v"
 module rom (
@@ -35,3 +36,4 @@ module rom (
     end
 
 endmodule
+=======
