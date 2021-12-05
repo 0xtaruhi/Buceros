@@ -26,6 +26,8 @@
 `define INST_W                              32
 `define InstAddrBus                         31:0
 
+`define ZeroWord                            32'h00000000
+
 // pc reg
 `define PC_RST_ADDR                         32'b0
 
@@ -35,6 +37,7 @@
 `define Funct7Bus                           6:0
 `define ImmBus                              31:0
 `define OpcodeBus                           6:0
+<<<<<<< HEAD
 `define Enable                              1
 `define Disable                             0
 `define NrstEnable                          0
@@ -52,3 +55,35 @@
 `define I_Type3                             7'b0001111
 `define I_Type4                             7'b1110011
 `endif // _DEFINE_V'b
+=======
+
+// ex
+`define INST_LUI                            7'b0110111
+`define INST_AUIPC                          7'b0010111
+`define INST_JAL                            7'b1101111
+`define INST_JALR                           7'b1100111
+`define INST_B_TYPE                         7'b1100011
+`define INST_LOAD                           7'b0000011
+`define INST_STORE                          7'b0100011
+`define INST_ARITH_IMM                      7'b0010011 // arithmetic with immediate
+`define INST_ARITH                          7'b0110011
+`define INST_FENCE                          7'b0001111
+`define INST_ENV                            7'b1110011
+`define INST_SUM                            3'b000 // ADDI      and ADD,SUB
+`define INST_SL                             3'b001 // SLLI      and SLL
+`define INST_SLT                            3'b010 // SLTI      and SLT
+`define INST_SLTU                           3'b011 // SLTIU     and SLTU
+`define INST_XOR                            3'b100 // XORI      and XOR
+`define INST_SR                             3'b101 // SRLI,SRAI and SRL,SRA
+`define INST_OR                             3'b110 // ORI       and OR
+`define INST_AND                            3'b111 // ANDI      and AND
+
+// mem
+`define INST_BYTE                           3'b000
+`define INST_HALF_WORD                      3'b001
+`define INST_WORD                           3'b010
+`define INST_BYTE_U                         3'b100
+`define INST_HALF_WORD_U                    3'b101
+
+`endif // _DEFINE_V
+>>>>>>> 5539a327fc73013dd289de29a578fba0ad125d11
