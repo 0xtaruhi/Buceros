@@ -83,5 +83,7 @@
 `define INST_BYTE_U                         3'b100
 `define INST_HALF_WORD_U                    3'b101
 
+//mem_wb
+`define StallBus                            0:0
 `endif // _DEFINE_V
 
