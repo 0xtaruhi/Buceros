@@ -31,11 +31,29 @@
 // pc reg
 `define PC_RST_ADDR                         32'b0
 
+//ram register
 // id
 `define Funct3Bus                           2:0
 `define Funct7Bus                           6:0
 `define ImmBus                              31:0
 `define OpcodeBus                           6:0
+<<<<<<< HEAD
+`define Enable                              1
+`define Disable                             0
+`define NrstEnable                          0
+`define NrstDisable                         1
+`define ZeroWord                            32'b0
+`define U_Type_Plus                         7'b0110111
+`define U_Type                              7'b0010111
+`define J_Type                              7'b1101111
+`define I_Type_Plus                         7'b1100111
+`define B_Type                              7'b1100011
+`define I_Type1                             7'b0000011
+`define S_Type                              7'b0100011
+`define I_Type2                             7'b0010011
+`define R_Type                              7'b0110011
+`define I_Type3                             7'b0001111
+`define I_Type4                             7'b1110011
 
 // ex
 `define INST_LUI                            7'b0110111
@@ -65,4 +83,7 @@
 `define INST_BYTE_U                         3'b100
 `define INST_HALF_WORD_U                    3'b101
 
+//mem_wb
+`define StallBus                            0:0
 `endif // _DEFINE_V
+
