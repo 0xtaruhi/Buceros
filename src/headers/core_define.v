@@ -2,7 +2,7 @@
  * Description  : general definition
  * Author       : Zhengyi Zhang
  * Date         : 2021-11-25 16:36:53
- * LastEditTime : 2021-11-28 19:21:38
+ * LastEditTime : 2021-12-12 00:38:26
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\headers\core_define.v
  */
@@ -24,7 +24,9 @@
 `define REG_NUM                             32  
 
 `define INST_W                              32
+`define InstBus                             31:0
 `define InstAddrBus                         31:0
+`define INST_ADDR_W                         32
 
 `define ZeroWord                            32'h00000000
 
@@ -34,6 +36,7 @@
 // id
 `define Funct3Bus                           2:0
 `define Funct7Bus                           6:0
+`define IMM_W                               32
 `define ImmBus                              31:0
 `define OpcodeBus                           6:0
 
