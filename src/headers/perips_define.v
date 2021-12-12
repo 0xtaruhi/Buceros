@@ -2,7 +2,9 @@
 `define _PERIPS_HEADER_V_
 
 `define MemAddrBus                          31:0
+`define MEM_ADDR_W                          32
 `define MemDataBus                          31:0
+`define MEM_DATA_W                          32
 `define WordBus                             31:0
 
 `define ROM_WIDTH                           32

@@ -14,7 +14,7 @@ module ex (
 
     output wire               wmem_en_o,
     output wire               rmem_en_o,
-    output wire [`RomAddrBus] mem_addr_o,
+    output wire [`MemAddrBus] mem_addr_o,
     output wire [ `Funct3Bus] funct3_o,
     output wire               wreg_en_o,
     output wire [`RegAddrBus] wreg_addr_o,

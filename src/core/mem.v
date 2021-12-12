@@ -3,8 +3,8 @@
 module mem (
     input  wire               wmem_en_i,
     input  wire               rmem_en_i,
-    input  wire [`RomAddrBus] mem_addr_i,
-    input  wire [    `RomBus] mem_data_i,   // data from RAM IF LOAD
+    input  wire [`MemAddrBus] mem_addr_i,
+    input  wire [   `WordBus] mem_data_i,   // data from RAM IF LOAD
     input  wire [ `Funct3Bus] funct3_i,
     input  wire               wreg_en_i,
     input  wire [`RegAddrBus] wreg_addr_i,
@@ -12,7 +12,7 @@ module mem (
 
     output wire               wmem_en_o,
     output wire               rmem_en_o,
-    output wire [    `RomBus] mem_data_o,
+    output wire [   `WordBus] mem_data_o,
     output wire               wreg_en_o,
     output wire [`RegAddrBus] wreg_addr_o,
     output wire [`RegDataBus] wreg_data_o

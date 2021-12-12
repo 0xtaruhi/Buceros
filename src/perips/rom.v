@@ -2,7 +2,7 @@
  * Description  : 
  * Author       : Zhengyi Zhang
  * Date         : 2021-12-12 00:37:22
- * LastEditTime : 2021-12-12 11:06:03
+ * LastEditTime : 2021-12-12 11:25:59
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\perips\rom.v
  */
@@ -20,7 +20,7 @@ module rom
     input  wire [   `WordBus] w_data_i, 
     input  wire [        3:0] w_sel_i,
 
-    output wire [   `WordBus] r_data_o,
+    output wire [   `WordBus] r_data_o
 );
 
     reg  [`WordBus] _rom [0:ROM_DEPTH-1];
