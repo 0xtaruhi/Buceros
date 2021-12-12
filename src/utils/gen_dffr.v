@@ -2,11 +2,11 @@
  * Description  : Asynchronous Reset D-Flip-Flop with reset value 0
  * Author       : Zhengyi Zhang
  * Date         : 2021-11-25 16:58:54
- * LastEditTime : 2021-11-25 17:06:27
+ * LastEditTime : 2021-12-12 01:42:56
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\utils\gen_dffr.v
  */
-
+`include "../headers/buceros_header.v"
 module gen_dffr #(
     parameter WIDTH = 1
 ) (
@@ -21,7 +21,7 @@ module gen_dffr #(
 
     always @(posedge clk or negedge rst_n) begin
         if(~rst_n) begin
-            data_o <= 0;
+            data_o <= `ZeroWord;
         end else if(hold_i) begin
             data_o <= data_o;
         end else begin

@@ -2,7 +2,7 @@
  * Description  : general definition
  * Author       : Zhengyi Zhang
  * Date         : 2021-11-25 16:36:53
- * LastEditTime : 2021-12-12 00:38:26
+ * LastEditTime : 2021-12-12 11:14:44
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\headers\core_define.v
  */
@@ -35,10 +35,13 @@
 
 // id
 `define Funct3Bus                           2:0
+`define FUNCT3_W                            3
+`define FUNCT7_W                            7
 `define Funct7Bus                           6:0
 `define IMM_W                               32
 `define ImmBus                              31:0
 `define OpcodeBus                           6:0
+`define OPCODE_W                            7
 
 // ex
 `define INST_LUI                            7'b0110111
