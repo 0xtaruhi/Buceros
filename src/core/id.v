@@ -2,7 +2,7 @@
  * Description  : 
  * Author       : Zhengyi Zhang
  * Date         : 2021-12-06 21:19:00
- * LastEditTime : 2021-12-12 00:37:30
+ * LastEditTime : 2021-12-12 11:51:22
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\core\id.v
  */
@@ -104,7 +104,7 @@
                    {{`INST_ADDR_W{inst_jalr}}}              & (pc_i + imm_o + rs1_data_o);
                    
      assign rs_diff_signed = rs1_data_o[`REG_DATA_W-1] ^ rs2_data_o[`REG_DATA_W-1];
-     assign rs1_lt_rs2_exclude_msb = rs1_data_o[`REG_DATA_W-2:0] < rs2_data_o[`REG_DATA_W-2:0];
+     assign rs1_ltu_rs2_exclude_msb = rs1_data_o[`REG_DATA_W-2:0] < rs2_data_o[`REG_DATA_W-2:0];
      assign rs1_ltu_rs2 = rs_diff_signed ? rs2_data_o[`REG_DATA_W-1] : rs1_ltu_rs2_exclude_msb;
      assign rs1_lt_rs2  = rs_diff_signed ? rs1_data_o[`REG_DATA_W-1] : rs1_ltu_rs2_exclude_msb;
      assign rs1_eq_rs2  = rs1_data_o == rs2_data_o;
