@@ -2,3 +2,6 @@
 Buceros_FPGA
 .metals
 .vscode
+doc/*
+!doc/document.pdf
+!doc/document.tex

@@ -1,0 +1,48 @@
+%!TEX program = xelatex
+\documentclass[lang=cn,11pt,a4paper,chinesefont=founder]{elegantpaper}
+
+\title{Buceros: 一个简单的RISC-V SOC}
+\author{张政镒 \\ 20300750021 \and 李少群 \\ 20300750018 \and 王彬 \\ 20300750019}
+\institute{\href{https://github.com/0xtaruhi/Buceros}{Github项目链接}}
+
+\date{\zhtoday}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+    本文为
+    \keywords{中央处理器, RISC-V指令集, SOC}
+\end{abstract}
+
+\section{概述}
+
+\section{实现}
+\subsection{流水线}
+\subsubsection{PC寄存器}
+
+\subsubsection{取指}
+
+\subsubsection{译码}
+
+\subsubsection{执行}
+
+\subsubsection{访存/回写}
+
+\subsection{存储与外设}
+
+\subsubsection{地址分配}
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ccccc}
+        \toprule
+        可用地址空间 & 实际占用地址空间 & 设备 & 类型 & 容量\\
+        \midrule
+        0x0000\_0000 -- 0x0000\_ffff & 0x0000\_0000 -- 0x0000\_ffff & 指令存储器 & 只读* & 64KB\\
+        0x2000\_0000 -- 0x3fff\_ffff & 0x0000\_0000 -- 0x2000\_ffff & 数据存储器 & 读/写 & 64KB\\
+        0x4000\_0000 -- 0x5fff\_ffff & 0x4000\_0000 -- 0x4000\_00ff & 通用输入输出 & 读/写 & 256Byte\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\end{document}
