@@ -1,16 +1,17 @@
 `include "../headers/buceros_header.v"
 
 module ex (
-    input  wire               wmem_en_i,
-    input  wire               rmem_en_i,
-    input  wire [ `OpcodeBus] opcode_i,
-    input  wire [ `Funct3Bus] funct3_i,
-    input  wire [ `Funct7Bus] funct7_i,
-    input  wire [    `ImmBus] imm_i,
-    input  wire               wreg_en_i,
-    input  wire [`RegAddrBus] wreg_addr_i,
-    input  wire [`RegDataBus] rs1_data_i,
-    input  wire [`RegDataBus] rs2_data_i,
+    input  wire [`InstAddrBus] pc_i,        // newly added in Buceros
+    input  wire                wmem_en_i,
+    input  wire                rmem_en_i,
+    input  wire [  `OpcodeBus] opcode_i,
+    input  wire [  `Funct3Bus] funct3_i,
+    input  wire [  `Funct7Bus] funct7_i,
+    input  wire [     `ImmBus] imm_i,       // only extended but not shifted
+    input  wire                wreg_en_i,
+    input  wire [ `RegAddrBus] wreg_addr_i,
+    input  wire [ `RegDataBus] rs1_data_i,
+    input  wire [ `RegDataBus] rs2_data_i,
 
     output wire               wmem_en_o,
     output wire               rmem_en_o,
@@ -37,50 +38,50 @@ module ex (
     wire [`RegDataBus] result_or;   // result of ORI and OR
     wire [`RegDataBus] result_and;  // result of ANDI and AND
 
-    assign wmem_en_o = wmem_en_i;
-    assign rmem_en_o = rmem_en_i;
-    assign mem_addr_o = rs1_data_i + imm_i;
-    assign funct3_o = funct3_i;
-    assign wreg_en_o = wreg_en_i;
-    assign wreg_addr_o = wreg_addr_i;
-    assign wreg_data_o = wreg_data_r;
+    assign wmem_en_o    = wmem_en_i;
+    assign rmem_en_o    = rmem_en_i;
+    assign mem_addr_o   = rs1_data_i + imm_i;
+    assign funct3_o     = funct3_i;
+    assign wreg_en_o    = wreg_en_i;
+    assign wreg_addr_o  = wreg_addr_i;
+    assign wreg_data_o  = wreg_data_r;
 
     assign data2 = opcode_i[5] ? rs2_data_i : imm_i;
     assign shift_num = data2[4:0];
     assign exe_sub = funct7_i[5] & opcode_i[5];
     assign exe_shift_arith = funct7_i[5];
 
-    assign result_sum  = rs1_data_i + (exe_sub ^ data2 + exe_sub);
-    assign result_sl   = rs1_data_i << shift_num;
-    assign result_slt  = rs1_data_i[`REG_DATA_W - 1] ^ data2[`REG_DATA_W - 1] ? rs1_data_i[`REG_DATA_W - 1] : rs1_data_i[`REG_DATA_W - 2:0] < data2[`REG_DATA_W - 2:0];
-    assign result_sltu = rs1_data_i < data2;
-    assign result_xor  = rs1_data_i ^ data2;
-    assign result_sr   = (rs1_data_i >> shift_num) | ({`REG_DATA_W{exe_shift_arith & rs1_data_i[`REG_DATA_W - 1]}} << (`REG_DATA_W - shift_num));
-    assign result_or   = rs1_data_i | data2;
-    assign result_and  = rs1_data_i & data2;
+    assign result_sum   = rs1_data_i + (exe_sub ^ data2 + exe_sub);
+    assign result_sl    = rs1_data_i << shift_num;
+    assign result_slt   = rs1_data_i[`REG_DATA_W - 1] ^ data2[`REG_DATA_W - 1] ? rs1_data_i[`REG_DATA_W - 1] : rs1_data_i[`REG_DATA_W - 2:0] < data2[`REG_DATA_W - 2:0];
+    assign result_sltu  = rs1_data_i < data2;
+    assign result_xor   = rs1_data_i ^ data2;
+    assign result_sr    = (rs1_data_i >> shift_num) | ({`REG_DATA_W{exe_shift_arith & rs1_data_i[`REG_DATA_W - 1]}} << (`REG_DATA_W - shift_num));
+    assign result_or    = rs1_data_i | data2;
+    assign result_and   = rs1_data_i & data2;
 
     always @ (*) begin
         case (opcode_i)
             `INST_LUI: begin
-                wreg_data_r = imm_i;
+                wreg_data_r = {imm_i[19:0], {12{1'b0}}};
             end
             `INST_AUIPC: begin
-                wreg_data_r = imm_i;
+                wreg_data_r = {pc_i[31:12] + imm_i[19:0], pc_i[11:0]};
             end
             `INST_JAL: begin
-                wreg_data_r = imm_i;
+                wreg_data_r = pc_i + 4;
             end
             `INST_JALR: begin
-                wreg_data_r = imm_i;
+                wreg_data_r = pc_i + 4;
             end
             `INST_B_TYPE: begin
-                wreg_data_r = `ZeroWord;
+                wreg_data_r = `ZERO_WORD;
             end
             `INST_LOAD: begin
-                wreg_data_r = `ZeroWord;
+                wreg_data_r = `ZERO_WORD;
             end
             `INST_STORE: begin
-                wreg_data_r = rs2_data_i; // if store, the data will be put in wreg_data!
+                wreg_data_r = rs2_data_i; // if store, the data will be put in wreg_data
             end
             `INST_ARITH_IMM: begin
                 case (funct3_i)
@@ -109,7 +110,7 @@ module ex (
                         wreg_data_r = result_and;
                     end
                     default: begin
-                        wreg_data_r = `ZeroWord;
+                        wreg_data_r = `ZERO_WORD;
                     end
                 endcase
             end
@@ -140,18 +141,18 @@ module ex (
                         wreg_data_r = result_and;
                     end
                     default: begin
-                        wreg_data_r = `ZeroWord;
+                        wreg_data_r = `ZERO_WORD;
                     end
                 endcase
             end
             `INST_FENCE: begin
-                wreg_data_r = `ZeroWord; // not extended yet
+                wreg_data_r = `ZERO_WORD; // not extended yet
             end
             `INST_ENV: begin
-                wreg_data_r = `ZeroWord; // not extended yet
+                wreg_data_r = `ZERO_WORD; // not extended yet
             end
             default: begin
-                wreg_data_r = `ZeroWord;
+                wreg_data_r = `ZERO_WORD;
             end
         endcase
     end

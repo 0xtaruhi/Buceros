@@ -7,6 +7,7 @@
  * FilePath     : \Buceros\src\core\id_ex.v
  */
 `include "../headers/buceros_header.v"
+
 module id_ex (
     input  wire                clk,
     input  wire                rst_n,

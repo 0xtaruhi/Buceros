@@ -7,6 +7,7 @@
  * FilePath     : \Buceros\src\core\id.v
  */
  `include "../headers/buceros_header.v"
+ 
  module id (
      input  wire                rst_n,
      input  wire [`InstAddrBus] pc_i,
@@ -21,7 +22,8 @@
      input  wire [ `RegDataBus] rs2_data_i,
  
      output wire                branch_o,
-     output wire [`InstAddrBus] pc_o,
+     output wire [`InstAddrBus] pc2pcreg_o,
+     output wire [`InstAddrBus] pc2ex_o,
      output wire                wmem_en_o,
      output wire                rmem_en_o,
      output wire [  `OpcodeBus] opcode_o,
@@ -33,7 +35,7 @@
      output wire [ `RegAddrBus] rs1_addr_o,
      output wire [ `RegDataBus] rs1_data_o,
      output wire [ `RegAddrBus] rs2_addr_o,
-     output wire [`RegDataBus] rs2_data_o
+     output wire [ `RegDataBus] rs2_data_o
  );
      // Instruction Type
      wire       inst_type_R;
@@ -100,8 +102,9 @@
      assign wmem_en_o   = inst_type_S;
      assign rmem_en_o   = inst_type_R;
  
-     assign pc_o = {{`INST_ADDR_W{inst_type_B | inst_jal}}} & (pc_i + imm_o) |
-                   {{`INST_ADDR_W{inst_jalr}}}              & (pc_i + imm_o + rs1_data_o);
+     assign pc2pcreg_o = {{`INST_ADDR_W{inst_type_B | inst_jal}}} & (pc_i + imm_o) |
+                         {{`INST_ADDR_W{inst_jalr}}}              & (pc_i + imm_o + rs1_data_o);
+     assign pc2ex_o = pc_i;
                    
      assign rs_diff_signed = rs1_data_o[`REG_DATA_W-1] ^ rs2_data_o[`REG_DATA_W-1];
      assign rs1_ltu_rs2_exclude_msb = rs1_data_o[`REG_DATA_W-2:0] < rs2_data_o[`REG_DATA_W-2:0];

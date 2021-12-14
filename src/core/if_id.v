@@ -7,6 +7,7 @@
  * FilePath     : \Buceros\src\core\if_id.v
  */
 `include "../headers/buceros_header.v"
+
 module if_id (
     input  wire                clk,
     input  wire                rst_n,
@@ -21,7 +22,7 @@ module if_id (
     always @(posedge clk or negedge rst_n) begin
         if(~rst_n) begin
             pc_o   <= `PC_RST_ADDR;
-            inst_o <= `ZeroWord;
+            inst_o <= `ZERO_WORD;
         end else if(hold_i) begin
             pc_o   <= pc_o;
             inst_o <= inst_o;
