@@ -12,17 +12,19 @@ module mem (
 
     output wire               wmem_en_o,
     output wire               rmem_en_o,
+    output wire [`MemAddrBus] mem_addr_o,
     output wire [   `WordBus] mem_data_o,
     output wire               wreg_en_o,
     output wire [`RegAddrBus] wreg_addr_o,
     output wire [`RegDataBus] wreg_data_o
 );
 
-    reg  [    `RomBus] mem_data_r;
+    reg  [   `WordBus] mem_data_r;
     reg  [`RegDataBus] wreg_data_r;
     
     assign wmem_en_o = wmem_en_i;
     assign rmem_en_o = rmem_en_i;
+    assign mem_addr_o = mem_addr_i;
     assign mem_data_o = mem_data_r;
     assign wreg_en_o = wreg_en_i;
     assign wreg_addr_o = wreg_addr_i;
@@ -41,12 +43,12 @@ module mem (
                     mem_data_r = wreg_data_i; // not extended to ARCH_RV64, so the code has been simplified
                 end
                 default: begin
-                    mem_data_r = `ZeroWord;
+                    mem_data_r = `ZERO_WORD;
                 end
             endcase
-            wreg_data_r = `ZeroWord; // when store, do nothing with wreg_data
+            wreg_data_r = `ZERO_WORD; // when store, do nothing with wreg_data
         end else if (rmem_en_i) begin
-            mem_data_r = `ZeroWord; // when load, do nothing with mem_data
+            mem_data_r = `ZERO_WORD; // when load, do nothing with mem_data
             case (funct3_i)
                 `INST_BYTE: begin
                     wreg_data_r = {{(`ROM_WIDTH - `BYTE_WIDTH){mem_data_i[`BYTE_WIDTH - 1]}},mem_data_i[`BYTE_WIDTH - 1:0]};
@@ -64,11 +66,11 @@ module mem (
                     wreg_data_r = {{(`ROM_WIDTH - `HALF_WORD_WIDTH){1'b0}},mem_data_i[`HALF_WORD_WIDTH - 1]};
                 end
                 default: begin
-                    wreg_data_r = `ZeroWord;
+                    wreg_data_r = `ZERO_WORD;
                 end
             endcase
         end else begin
-            mem_data_r = `ZeroWord;
+            mem_data_r = `ZERO_WORD;
             wreg_data_r = wreg_data_i;
         end
     end

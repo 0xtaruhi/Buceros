@@ -7,6 +7,7 @@
  * FilePath     : \Buceros\src\perips\rom.v
  */
 `include "../headers/buceros_header.v"
+
 module rom
 #(parameter ROM_DEPTH = 16384,
   parameter ROM_DEPTH_BIT_LEN = 14)
@@ -31,7 +32,7 @@ module rom
     assign r_idx = r_addr_i[ROM_DEPTH_BIT_LEN+1:2];
     assign w_idx   = w_addr_i[ROM_DEPTH_BIT_LEN+1:2];
 
-    assign r_data_o = rst_n ? _rom[r_idx] : `ZeroWord;
+    assign r_data_o = rst_n ? _rom[r_idx] : `ZERO_WORD;
 
     always @(posedge clk or negedge rst_n) begin
         if(~rst_n) begin

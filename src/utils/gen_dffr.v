@@ -7,6 +7,7 @@
  * FilePath     : \Buceros\src\utils\gen_dffr.v
  */
 `include "../headers/buceros_header.v"
+
 module gen_dffr #(
     parameter WIDTH = 1
 ) (
@@ -21,7 +22,7 @@ module gen_dffr #(
 
     always @(posedge clk or negedge rst_n) begin
         if(~rst_n) begin
-            data_o <= `ZeroWord;
+            data_o <= `ZERO_WORD;
         end else if(hold_i) begin
             data_o <= data_o;
         end else begin
