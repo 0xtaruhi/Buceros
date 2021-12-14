@@ -7,6 +7,7 @@
  * FilePath     : \Buceros\src\perips\ram.v
  */
 `include "../headers/buceros_header.v"
+
 module ram
 #(parameter RAM_DEPTH = 16384,
   parameter RAM_DEPTH_BIT_LEN = 14)
@@ -35,8 +36,8 @@ module ram
     assign r_2_idx = r_addr2_i[RAM_DEPTH_BIT_LEN+1:2];
     assign w_idx   = w_addr_i[RAM_DEPTH_BIT_LEN+1:2];
 
-    assign r_data1_o = rst_n ? _ram[r_1_idx] : `ZeroWord;
-    assign r_data2_o = rst_n ? _ram[r_2_idx] : `ZeroWord;
+    assign r_data1_o = rst_n ? _ram[r_1_idx] : `ZERO_WORD;
+    assign r_data2_o = rst_n ? _ram[r_2_idx] : `ZERO_WORD;
 
     always @(posedge clk or negedge rst_n) begin
         if(~rst_n) begin

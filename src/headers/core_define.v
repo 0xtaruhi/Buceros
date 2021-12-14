@@ -28,11 +28,12 @@
 `define InstAddrBus                         31:0
 `define INST_ADDR_W                         32
 
-`define ZeroWord                            32'h00000000
+`define ZERO_WORD                            32'h00000000
 
 // pc reg
 `define PC_RST_ADDR                         32'b0
 
+//ram register
 // id
 `define Funct3Bus                           2:0
 `define FUNCT3_W                            3
@@ -71,4 +72,7 @@
 `define INST_BYTE_U                         3'b100
 `define INST_HALF_WORD_U                    3'b101
 
+//mem_wb
+`define StallBus                            0:0
 `endif // _DEFINE_V
+
