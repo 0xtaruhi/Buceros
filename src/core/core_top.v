@@ -3,14 +3,14 @@
 module core_top (
         input  wire               clk,
         input  wire               rst_n,
-        input  wire               enter,
+        input  wire               io_enter,
 
         input  wire [   `WordBus] inst_i,
-        input  wire [   `WordBus] mem_data_i,
+        input  wire [   `WordBus] rmem_data_i,
 
         output wire               wmem_en_o,    // write RAM
         output wire               rmem_en_o,    // read RAM
-        output wire [   `WordBus] mem_data_o,   // data to be put in RAM
+        output wire [   `WordBus] wmem_data_o,   // data to be put in RAM
         output wire [`MemAddrBus] rom_addr_o,   // special for ROM
         output wire [`MemAddrBus] mem_addr_o    // for RAM, UART, GPIO
         //*** not completed yet
@@ -66,11 +66,13 @@ module core_top (
     wire                mem_wreg_en_i;
     wire [ `RegAddrBus] mem_wreg_addr_i;
     wire [ `RegDataBus] mem_wreg_data_i;  // IF STORE; the data(to be put in RAM) will be put here
+    wire [    `WordBus] mem_wmem_data_i;
 
     // from mem to mem_wb
     wire                mem_wreg_en_o;
     wire [ `RegAddrBus] mem_wreg_addr_o;
     wire [ `RegDataBus] mem_wreg_data_o;
+    wire [    `WordBus] mem_wmem_data_o;
 
     // between id and pc_reg
     wire                branch;
@@ -104,6 +106,7 @@ module core_top (
         .clk (clk ),
         .rst_n (rst_n ),
         .hold_i (stall[1] ),
+        .jmp_en_i(branch),
         .pc_i (pc ),
         .inst_i (inst_i ),
         .pc_o (id_pc_i ),
@@ -134,9 +137,9 @@ module core_top (
         .wreg_en_o (id_wreg_en_o ),
         .wreg_addr_o (id_wreg_addr_o ),
         .rs1_addr_o (regfile_rs1_addr_i ),
-        .rs1_data_o (regfile_rs1_data_i ),
+        .rs1_data_o (id_rs1_data_o ),
         .rs2_addr_o (regfile_rs2_addr_i ),
-        .rs2_data_o  ( regfile_rs2_data_i)
+        .rs2_data_o  (id_rs2_data_o)
     );
   
     id_ex inst_id_ex (
@@ -191,7 +194,7 @@ module core_top (
     ex_mem inst_ex_mem (
         .clk (clk ),
         .rst_n (rst_n ),
-        .hold_i (stall[4] ),
+        .hold_i (stall[3] ),
         .ex_wmem_en_i (ex_wmem_en_o ),
         .ex_rmem_en_i (ex_rmem_en_o ),
         .ex_mem_addr_i (ex_mem_addr_o ),
@@ -212,7 +215,7 @@ module core_top (
         .wmem_en_i (mem_wmem_en_i ),
         .rmem_en_i (mem_rmem_en_i ),
         .mem_addr_i (mem_mem_addr_i ),
-        .mem_data_i (mem_data_i ),
+        .rmem_data_i (mem_rmem_data_i ),
         .funct3_i (mem_funct3_i ),
         .wreg_en_i (mem_wreg_en_i ),
         .wreg_addr_i (mem_wreg_addr_i ),
@@ -220,7 +223,7 @@ module core_top (
         .wmem_en_o (wmem_en_o ),
         .rmem_en_o (rmem_en_o ),
         .mem_addr_o (mem_addr_o ),
-        .mem_data_o (mem_data_o ),
+        .wmem_data_o (mem_wmem_data_o ),
         .wreg_en_o (mem_wreg_en_o ),
         .wreg_addr_o (mem_wreg_addr_o ),
         .wreg_data_o  ( mem_wreg_data_o)
@@ -229,7 +232,7 @@ module core_top (
     mem_wb inst_mem_wb (
         .clk (clk ),
         .rst_n (rst_n ),
-        .hold_i (stall[5] ),
+        .hold_i (stall[4] ),
         .mem_wreg_en_i (mem_wreg_en_o ),
         .mem_wreg_addr_i (mem_wreg_addr_o ),
         .mem_wreg_data_i (mem_wreg_data_o ),
@@ -249,9 +252,18 @@ module core_top (
       .r_data1_o (regfile_rs1_data_o ),
       .r_data2_o  ( regfile_rs2_data_o)
     );
+
+    ctrl inst_ctrl(
+        .rst_n(rst_n),
+        .stallreq_id_i(stallreq_id_i),
+        .stallreq_ex_i(stallreq_ex_i),
+        .stallreq_wb_i(stallreq_wb_i),
+        .enter_i(io_enter),
+        .stall_o(stall)
+    );
   
-    
-  
+    assign rmem_data_i = mem_rmem_data_i;
+    assign wmem_data_o = mem_wmem_data_o;
     assign rom_addr_o = pc;
 
 endmodule //core_top

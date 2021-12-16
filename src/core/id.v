@@ -2,7 +2,7 @@
  * Description  : 
  * Author       : Zhengyi Zhang
  * Date         : 2021-12-06 21:19:00
- * LastEditTime : 2021-12-12 11:51:22
+ * LastEditTime : 2021-12-16 15:16:00
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\core\id.v
  */
@@ -80,8 +80,8 @@
  
      assign opcode_o     = inst_i[ 6: 0];
      assign wreg_addr_o  = inst_i[11: 7];
-     assign rs1_addr_o   = inst_i[20:16];
-     assign rs2_addr_o   = inst_i[25:21];
+     assign rs1_addr_o   = inst_i[19:15];
+     assign rs2_addr_o   = inst_i[24:20];
      assign funct3_o     = inst_i[14:12];
      assign funct7_o     = inst_i[31:25];
      assign imm_o        = {`IMM_W{inst_type_I}} & {{20{inst_i[31]}}, inst_i[31:20]} |
@@ -100,7 +100,7 @@
                           rs2_data_i;
  
      assign wmem_en_o   = inst_type_S;
-     assign rmem_en_o   = inst_type_R;
+     assign rmem_en_o   = inst_load;
  
      assign pc2pcreg_o = {{`INST_ADDR_W{inst_type_B | inst_jal}}} & (pc_i + imm_o) |
                          {{`INST_ADDR_W{inst_jalr}}}              & (pc_i + imm_o + rs1_data_o);
@@ -112,7 +112,8 @@
      assign rs1_lt_rs2  = rs_diff_signed ? rs1_data_o[`REG_DATA_W-1] : rs1_ltu_rs2_exclude_msb;
      assign rs1_eq_rs2  = rs1_data_o == rs2_data_o;
  
-     assign branch_o    = funct3_o[0] ^ (~funct3_o[2] & ~funct3_o[1] & rs1_eq_rs2 |          // 00  beq
+     assign branch_o    = inst_branch & (funct3_o[0] ^ (~funct3_o[2] & ~funct3_o[1] & rs1_eq_rs2 |          // 00  beq
                                          funct3_o[2] & ~funct3_o[1] & rs1_lt_rs2 |           // 10  blt
-                                         funct3_o[2] & funct3_o[1] & rs1_ltu_rs2);           // 11  bltu
+                                         funct3_o[2] & funct3_o[1] & rs1_ltu_rs2))
+                          | inst_jal | inst_jalr;           // 11  bltu
  endmodule //id

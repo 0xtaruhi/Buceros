@@ -2,7 +2,7 @@
  * Description  : 
  * Author       : Zhengyi Zhang
  * Date         : 2021-11-25 16:40:08
- * LastEditTime : 2021-12-12 11:22:17
+ * LastEditTime : 2021-12-16 14:41:05
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\core\id_ex.v
  */
@@ -12,7 +12,7 @@ module id_ex (
     input  wire                clk,
     input  wire                rst_n,
     input  wire                hold_i,
-
+    
     input  wire [`InstAddrBus] id_pc_i,
     input  wire                id_wmem_en_i,
     input  wire                id_rmem_en_i,

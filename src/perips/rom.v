@@ -2,15 +2,15 @@
  * Description  : 
  * Author       : Zhengyi Zhang
  * Date         : 2021-12-12 00:37:22
- * LastEditTime : 2021-12-12 11:25:59
+ * LastEditTime : 2021-12-15 11:24:28
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\perips\rom.v
  */
 `include "../headers/buceros_header.v"
 
 module rom
-#(parameter ROM_DEPTH = 16384,
-  parameter ROM_DEPTH_BIT_LEN = 14)
+#(parameter ROM_DEPTH = 1024, //16384
+  parameter ROM_DEPTH_BIT_LEN = 10) //14
 (
     input  wire               clk,
     input  wire               rst_n,
@@ -28,6 +28,10 @@ module rom
     wire [ROM_DEPTH_BIT_LEN-1:0] r_idx;
     wire [ROM_DEPTH_BIT_LEN-1:0] w_idx;
     integer i;
+
+    initial begin
+        $readmemh("led.mem", _rom);
+    end
     
     assign r_idx = r_addr_i[ROM_DEPTH_BIT_LEN+1:2];
     assign w_idx   = w_addr_i[ROM_DEPTH_BIT_LEN+1:2];
@@ -37,7 +41,7 @@ module rom
     always @(posedge clk or negedge rst_n) begin
         if(~rst_n) begin
             for(i=0;i!=ROM_DEPTH;i=i+1) begin
-                _rom[i] <= 0;
+                _rom[i] <= _rom[i];
             end
         end else begin
             if(w_en_i) begin

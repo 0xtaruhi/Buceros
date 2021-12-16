@@ -34,13 +34,16 @@
 \subsubsection{地址分配}
 \begin{table}[h!]
     \centering
-    \begin{tabular}{ccccc}
+    \begin{tabular}{cclll}
         \toprule
         可用地址空间 & 实际占用地址空间 & 设备 & 类型 & 容量\\
         \midrule
-        0x0000\_0000 -- 0x0000\_ffff & 0x0000\_0000 -- 0x0000\_ffff & 指令存储器 & 只读* & 64KB\\
-        0x2000\_0000 -- 0x3fff\_ffff & 0x0000\_0000 -- 0x2000\_ffff & 数据存储器 & 读/写 & 64KB\\
-        0x4000\_0000 -- 0x5fff\_ffff & 0x4000\_0000 -- 0x4000\_00ff & 通用输入输出 & 读/写 & 256Byte\\
+        \texttt{0x0000\_0000 --- 0x1fff\_ffff} & \texttt{0x0000\_0000 --- 0x0000\_ffff} & 指令存储器(ROM) & 只读* & 64KB\\
+        \texttt{0x2000\_0000 --- 0x3fff\_ffff} & \texttt{0x2000\_0000 --- 0x2000\_ffff} & 数据存储器(RAM) & 读/写 & 64KB\\
+        \texttt{0x4000\_0000 --- 0x5fff\_ffff} & \texttt{0x4000\_0000 --- 0x4000\_0001} & GPIO(LED)       & 读/写 & 2Byte \\
+        \texttt{0x4000\_0000 --- 0x5fff\_ffff} & \texttt{0x4000\_0004 --- 0x4000\_0005} & GPIO(七段数码管显示) & 读/写 & 2Byte \\
+        \texttt{0x4000\_0000 --- 0x5fff\_ffff} & \texttt{0x4000\_0008 --- 0x4000\_0008} & GPIO(七段数码管选通) & 读/写 & 1Byte \\
+        \texttt{0x4000\_0000 --- 0x5fff\_ffff} & \texttt{0x5000\_0000 --- 0x5000\_0001} & GPIO(开关)       & 只读  & 2Byte \\
         \bottomrule
     \end{tabular}
 \end{table}
