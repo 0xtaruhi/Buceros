@@ -2,7 +2,7 @@
  * Description  : general definition
  * Author       : Zhengyi Zhang
  * Date         : 2021-11-25 16:36:53
- * LastEditTime : 2021-12-15 14:19:03
+ * LastEditTime : 2021-12-16 17:03:22
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\headers\core_define.v
  */
@@ -43,7 +43,7 @@
 `define ImmBus                              31:0
 `define OpcodeBus                           6:0
 `define OPCODE_W                            7
-`define NOP                                 32'h00100013
+`define NOP                                 32'h00000013
 
 // ex
 `define INST_LUI                            7'b0110111

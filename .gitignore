@@ -5,3 +5,4 @@ Buceros_FPGA
 doc/*
 !doc/document.pdf
 !doc/document.tex
+.VSCodeCounter

@@ -1,6 +1,5 @@
-addi t2, x0, 100
-LOOP:
-add t3, t3, t1
-addi t1, t1, 1
-bne t1, t2, LOOP
-jal ra, 0
+li t0, 0xffff
+li s0, 0x20000000
+sw t0, 0(s0)
+lw t1, 0(s0)
+jal x0, 0

@@ -42,9 +42,9 @@ module gpio (
     assign r_led      = r_en & led_en;
     assign w_led      = w_en & led_en;
     // seg disp 0x4000_0004 - 0x4000_0005
-    assign seg_disp_en = ~addr_i[28] & ~addr_i[3] & addr_i[2];
-    assign r_seg_disp = r_en & seg_disp_en;
-    assign w_seg_disp = w_en & seg_disp_en;
+    assign seg_en = ~addr_i[28] & ~addr_i[3] & addr_i[2];
+    assign r_seg = r_en & seg_en;
+    assign w_seg = w_en & seg_en;
     // seg sel 0x4000_0008
     assign seg_sel_en = ~addr_i[28] & addr_i[3];
     assign r_seg_sel  = r_en & seg_sel_en;

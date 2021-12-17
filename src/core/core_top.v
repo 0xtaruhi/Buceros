@@ -66,7 +66,8 @@ module core_top (
     wire                mem_wreg_en_i;
     wire [ `RegAddrBus] mem_wreg_addr_i;
     wire [ `RegDataBus] mem_wreg_data_i;  // IF STORE; the data(to be put in RAM) will be put here
-    wire [    `WordBus] mem_wmem_data_i;
+    // wire [    `WordBus] mem_wmem_data_i;
+    wire [    `WordBus] mem_rmem_data_i;
 
     // from mem to mem_wb
     wire                mem_wreg_en_o;
@@ -262,7 +263,7 @@ module core_top (
         .stall_o(stall)
     );
   
-    assign rmem_data_i = mem_rmem_data_i;
+    assign mem_rmem_data_i = rmem_data_i;
     assign wmem_data_o = mem_wmem_data_o;
     assign rom_addr_o = pc;
 
