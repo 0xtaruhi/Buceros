@@ -1,16 +1,9 @@
-/*
- * Description  : Asynchronous Reset D-Flip-Flop with reset value 0
- * Author       : Zhengyi Zhang
- * Date         : 2021-11-25 16:58:54
- * LastEditTime : 2021-12-12 01:42:56
- * LastEditors  : Zhengyi Zhang
- * FilePath     : \Buceros\src\utils\gen_dffr.v
- */
 `include "../headers/buceros_header.v"
 
-module gen_dffr #(
+module gen_dffsr #(
     parameter WIDTH = 1,
-    parameter RST_DATA = 0
+    parameter RST_DATA = 0,
+    parameter HOLD_DATA = 0
 ) (
     input  wire             clk,
     input  wire             rst_n,
@@ -25,10 +18,10 @@ module gen_dffr #(
         if(~rst_n) begin
             data_o <= RST_DATA;
         end else if(hold_i) begin
-            data_o <= data_o;
+            data_o <= HOLD_DATA;
         end else begin
             data_o <= data_i;
         end
     end
 
-endmodule //gen_dffr
+endmodule //gen_dffsr
