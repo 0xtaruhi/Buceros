@@ -6,3 +6,4 @@ doc/*
 !doc/document.pdf
 !doc/document.tex
 .VSCodeCounter
+compiler/*

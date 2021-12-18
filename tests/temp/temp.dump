@@ -1,0 +1,93 @@
+
+temp:     file format elf32-littleriscv
+
+
+Disassembly of section .init:
+
+00000000 <_start>:
+   0:	20001197          	auipc	gp,0x20001
+   4:	80018193          	addi	gp,gp,-2048 # 20000800 <__global_pointer$>
+   8:	20004117          	auipc	sp,0x20004
+   c:	ff810113          	addi	sp,sp,-8 # 20004000 <__freertos_irq_stack_top>
+  10:	0b800513          	li	a0,184
+  14:	20000597          	auipc	a1,0x20000
+  18:	fec58593          	addi	a1,a1,-20 # 20000000 <__bss_start>
+  1c:	20000617          	auipc	a2,0x20000
+  20:	fe460613          	addi	a2,a2,-28 # 20000000 <__bss_start>
+  24:	00c5fc63          	bgeu	a1,a2,3c <_start+0x3c>
+  28:	00052283          	lw	t0,0(a0)
+  2c:	0055a023          	sw	t0,0(a1)
+  30:	00450513          	addi	a0,a0,4
+  34:	00458593          	addi	a1,a1,4
+  38:	fec5e8e3          	bltu	a1,a2,28 <_start+0x28>
+  3c:	20000517          	auipc	a0,0x20000
+  40:	fc450513          	addi	a0,a0,-60 # 20000000 <__bss_start>
+  44:	20000597          	auipc	a1,0x20000
+  48:	fbc58593          	addi	a1,a1,-68 # 20000000 <__bss_start>
+  4c:	00b57863          	bgeu	a0,a1,5c <_start+0x5c>
+  50:	00052023          	sw	zero,0(a0)
+  54:	00450513          	addi	a0,a0,4
+  58:	feb56ce3          	bltu	a0,a1,50 <_start+0x50>
+  5c:	008000ef          	jal	ra,64 <main>
+
+00000060 <loop>:
+  60:	0000006f          	j	60 <loop>
+
+Disassembly of section .text:
+
+00000064 <main>:
+  64:	fe010113          	addi	sp,sp,-32
+  68:	00812e23          	sw	s0,28(sp)
+  6c:	02010413          	addi	s0,sp,32
+  70:	fe042623          	sw	zero,-20(s0)
+  74:	fe042423          	sw	zero,-24(s0)
+  78:	0200006f          	j	98 <main+0x34>
+  7c:	fec42703          	lw	a4,-20(s0)
+  80:	fe842783          	lw	a5,-24(s0)
+  84:	00f707b3          	add	a5,a4,a5
+  88:	fef42623          	sw	a5,-20(s0)
+  8c:	fe842783          	lw	a5,-24(s0)
+  90:	00178793          	addi	a5,a5,1
+  94:	fef42423          	sw	a5,-24(s0)
+  98:	fe842703          	lw	a4,-24(s0)
+  9c:	06300793          	li	a5,99
+  a0:	fce7dee3          	bge	a5,a4,7c <main+0x18>
+  a4:	00000793          	li	a5,0
+  a8:	00078513          	mv	a0,a5
+  ac:	01c12403          	lw	s0,28(sp)
+  b0:	02010113          	addi	sp,sp,32
+  b4:	00008067          	ret
+
+Disassembly of section .stack:
+
+1fffc000 <__freertos_irq_stack_top-0x8000>:
+	...
+
+Disassembly of section .comment:
+
+00000000 <.comment>:
+   0:	3a434347          	fmsub.d	ft6,ft6,ft4,ft7,rmm
+   4:	2820                	fld	fs0,80(s0)
+   6:	20554e47          	fmsub.s	ft8,fa0,ft5,ft4,rmm
+   a:	434d                	li	t1,19
+   c:	2055                	jal	b0 <main+0x4c>
+   e:	6345                	lui	t1,0x11
+  10:	696c                	flw	fa1,84(a0)
+  12:	7370                	flw	fa2,100(a4)
+  14:	2065                	jal	bc <_data_lma+0x4>
+  16:	4952                	lw	s2,20(sp)
+  18:	562d4353          	0x562d4353
+  1c:	4520                	lw	s0,72(a0)
+  1e:	626d                	lui	tp,0x1b
+  20:	6465                	lui	s0,0x19
+  22:	6564                	flw	fs1,76(a0)
+  24:	2064                	fld	fs1,192(s0)
+  26:	2c434347          	0x2c434347
+  2a:	3620                	fld	fs0,104(a2)
+  2c:	2d34                	fld	fa3,88(a0)
+  2e:	6962                	flw	fs2,24(sp)
+  30:	2974                	fld	fa3,208(a0)
+  32:	3820                	fld	fs0,112(s0)
+  34:	322e                	fld	ft4,232(sp)
+  36:	302e                	fld	ft0,232(sp)
+	...
