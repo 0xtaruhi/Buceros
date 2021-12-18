@@ -84,6 +84,10 @@ module buceros_soc_top (
         .r_data_o(ram_data)
     );
 
-    assign clk = pin_clk;
+//    assign clk = pin_clk;
+    cpu_clk_div inst_cpu_clk_div(
+        .pin_clk(pin_clk),
+        .cpu_clk(clk)
+    );
 
 endmodule //buceros_soc_top

@@ -9,8 +9,8 @@
 `include "../headers/buceros_header.v"
 
 module rom
-#(parameter ROM_DEPTH = 4096, //16384
-  parameter ROM_DEPTH_BIT_LEN = 12) //14
+#(parameter ROM_DEPTH = 1024, //16384
+  parameter ROM_DEPTH_BIT_LEN = 10) //14
 (
     input  wire               clk,
     input  wire               rst_n,
@@ -24,13 +24,13 @@ module rom
     output wire [   `WordBus] r_data_o
 );
 
-    reg  [`WordBus] _rom [0:ROM_DEPTH-1];
+    (* ram_style = "block" *) reg  [`WordBus] _rom [0:ROM_DEPTH-1];
     wire [ROM_DEPTH_BIT_LEN-1:0] r_idx;
     wire [ROM_DEPTH_BIT_LEN-1:0] w_idx;
     integer i;
 
     initial begin
-        $readmemh("temp.bin", _rom);
+        $readmemh("D:/fpga/project/Buceros/tests/examples/led/led.mem", _rom);
     end
     
     assign r_idx = r_addr_i[ROM_DEPTH_BIT_LEN+1:2];
