@@ -10,7 +10,7 @@ module core_top (
 
         output wire               wmem_en_o,    // write RAM
         output wire               rmem_en_o,    // read RAM
-        output wire [   `WordBus] wmem_data_o,   // data to be put in RAM
+        output wire [   `WordBus] wmem_data_o,  // data to be put in RAM
         output wire [`MemAddrBus] rom_addr_o,   // special for ROM
         output wire [`MemAddrBus] mem_addr_o    // for RAM, UART, GPIO
         //*** not completed yet
@@ -89,9 +89,10 @@ module core_top (
     wire [ `RegDataBus] regfile_rs2_data_o;
 
     // ctrl
-    wire                stallreq_id_i;
-    wire                stallreq_ex_i;
-    wire                stallreq_wb_i;
+    // wire                stallreq_id_i;
+    // wire                stallreq_ex_i;
+    // wire                stallreq_wb_i;
+    wire                stallreq_id_ex_i;
     wire [         4:0] stall;
 
     pc_reg inst_pc_reg (
@@ -124,6 +125,9 @@ module core_top (
         .mem_wreg_en_i (mem_wreg_en_o ),
         .mem_wreg_addr_i (mem_wreg_addr_o ),
         .mem_wreg_data_i (mem_wreg_data_o ),
+        .wb_wreg_en_i(regfile_wreg_en_i),
+        .wb_wreg_addr_i(regfile_wreg_addr_i),
+        .wb_wreg_data_i(regfile_wreg_data_i),
         .rs1_data_i (regfile_rs1_data_o ),
         .rs2_data_i (regfile_rs2_data_o ),
         .branch_o (branch ),
@@ -168,7 +172,8 @@ module core_top (
       .ex_wreg_en_o (ex_wreg_en_i ),
       .ex_wreg_addr_o (ex_wreg_addr_i ),
       .ex_rs1_data_o (ex_rs1_data_i ),
-      .ex_rs2_data_o  ( ex_rs2_data_i)
+      .ex_rs2_data_o  ( ex_rs2_data_i),
+      .stallreq_id_ex_o ( stallreq_id_ex_i)
     );
   
     ex inst_ex (
@@ -256,9 +261,10 @@ module core_top (
 
     ctrl inst_ctrl(
         .rst_n(rst_n),
-        .stallreq_id_i(stallreq_id_i),
-        .stallreq_ex_i(stallreq_ex_i),
-        .stallreq_wb_i(stallreq_wb_i),
+        // .stallreq_id_i(stallreq_id_i),
+        // .stallreq_ex_i(stallreq_ex_i),
+        // .stallreq_wb_i(stallreq_wb_i),
+        .stallreq_id_ex_i(stallreq_id_ex_i),
         .enter_i(io_enter),
         .stall_o(stall)
     );
@@ -266,5 +272,6 @@ module core_top (
     assign mem_rmem_data_i = rmem_data_i;
     assign wmem_data_o = mem_wmem_data_o;
     assign rom_addr_o = pc;
+    // assign stallreq_id_ex_i = ex_rmem_en_i;
 
 endmodule //core_top

@@ -18,6 +18,9 @@
      input  wire                mem_wreg_en_i,
      input  wire [ `RegAddrBus] mem_wreg_addr_i,
      input  wire [ `RegDataBus] mem_wreg_data_i,
+     input  wire                wb_wreg_en_i,
+     input  wire [ `RegAddrBus] wb_wreg_addr_i,
+     input  wire [ `RegDataBus] wb_wreg_data_i,
      input  wire [ `RegDataBus] rs1_data_i,
      input  wire [ `RegDataBus] rs2_data_i,
  
@@ -94,9 +97,11 @@
  
      assign rs1_data_o  = (ex_wreg_en_i && ex_wreg_addr_i == rs1_addr_o)   ? ex_wreg_data_i  :
                           (mem_wreg_en_i && mem_wreg_addr_i == rs1_addr_o) ? mem_wreg_data_i :
+                          (wb_wreg_en_i && wb_wreg_addr_i == rs1_addr_o)   ? wb_wreg_data_i  :
                           rs1_data_i;
      assign rs2_data_o  = (ex_wreg_en_i && ex_wreg_addr_i == rs2_addr_o)   ? ex_wreg_data_i  :
                           (mem_wreg_en_i && mem_wreg_addr_i == rs2_addr_o) ? mem_wreg_data_i :
+                          (wb_wreg_en_i && wb_wreg_addr_i == rs2_addr_o)   ? wb_wreg_data_i  :
                           rs2_data_i;
  
      assign wmem_en_o   = inst_type_S;
