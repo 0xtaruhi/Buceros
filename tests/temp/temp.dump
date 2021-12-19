@@ -7,60 +7,64 @@ Disassembly of section .init:
 00000000 <_start>:
    0:	20001197          	auipc	gp,0x20001
    4:	80018193          	addi	gp,gp,-2048 # 20000800 <__global_pointer$>
-   8:	20004117          	auipc	sp,0x20004
-   c:	ff810113          	addi	sp,sp,-8 # 20004000 <__freertos_irq_stack_top>
-  10:	0b800513          	li	a0,184
-  14:	20000597          	auipc	a1,0x20000
-  18:	fec58593          	addi	a1,a1,-20 # 20000000 <__bss_start>
-  1c:	20000617          	auipc	a2,0x20000
-  20:	fe460613          	addi	a2,a2,-28 # 20000000 <__bss_start>
-  24:	00c5fc63          	bgeu	a1,a2,3c <_start+0x3c>
-  28:	00052283          	lw	t0,0(a0)
-  2c:	0055a023          	sw	t0,0(a1)
-  30:	00450513          	addi	a0,a0,4
-  34:	00458593          	addi	a1,a1,4
-  38:	fec5e8e3          	bltu	a1,a2,28 <_start+0x28>
-  3c:	20000517          	auipc	a0,0x20000
-  40:	fc450513          	addi	a0,a0,-60 # 20000000 <__bss_start>
-  44:	20000597          	auipc	a1,0x20000
-  48:	fbc58593          	addi	a1,a1,-68 # 20000000 <__bss_start>
-  4c:	00b57863          	bgeu	a0,a1,5c <_start+0x5c>
-  50:	00052023          	sw	zero,0(a0)
-  54:	00450513          	addi	a0,a0,4
-  58:	feb56ce3          	bltu	a0,a1,50 <_start+0x50>
-  5c:	008000ef          	jal	ra,64 <main>
+   8:	c0018113          	addi	sp,gp,-1024 # 20000400 <__freertos_irq_stack_top>
+   c:	0c800513          	li	a0,200
+  10:	20000597          	auipc	a1,0x20000
+  14:	ff058593          	addi	a1,a1,-16 # 20000000 <__bss_start>
+  18:	20000617          	auipc	a2,0x20000
+  1c:	fe860613          	addi	a2,a2,-24 # 20000000 <__bss_start>
+  20:	00c5fc63          	bgeu	a1,a2,38 <_start+0x38>
+  24:	00052283          	lw	t0,0(a0)
+  28:	0055a023          	sw	t0,0(a1)
+  2c:	00450513          	addi	a0,a0,4
+  30:	00458593          	addi	a1,a1,4
+  34:	fec5e8e3          	bltu	a1,a2,24 <_start+0x24>
+  38:	20000517          	auipc	a0,0x20000
+  3c:	fc850513          	addi	a0,a0,-56 # 20000000 <__bss_start>
+  40:	20000597          	auipc	a1,0x20000
+  44:	fc058593          	addi	a1,a1,-64 # 20000000 <__bss_start>
+  48:	00b57863          	bgeu	a0,a1,58 <_start+0x58>
+  4c:	00052023          	sw	zero,0(a0)
+  50:	00450513          	addi	a0,a0,4
+  54:	feb56ce3          	bltu	a0,a1,4c <_start+0x4c>
+  58:	008000ef          	jal	ra,60 <main>
 
-00000060 <loop>:
-  60:	0000006f          	j	60 <loop>
+0000005c <loop>:
+  5c:	0000006f          	j	5c <loop>
 
 Disassembly of section .text:
 
-00000064 <main>:
-  64:	fe010113          	addi	sp,sp,-32
-  68:	00812e23          	sw	s0,28(sp)
-  6c:	02010413          	addi	s0,sp,32
-  70:	fe042623          	sw	zero,-20(s0)
-  74:	fe042423          	sw	zero,-24(s0)
-  78:	0200006f          	j	98 <main+0x34>
-  7c:	fec42703          	lw	a4,-20(s0)
-  80:	fe842783          	lw	a5,-24(s0)
-  84:	00f707b3          	add	a5,a4,a5
-  88:	fef42623          	sw	a5,-20(s0)
-  8c:	fe842783          	lw	a5,-24(s0)
-  90:	00178793          	addi	a5,a5,1
-  94:	fef42423          	sw	a5,-24(s0)
-  98:	fe842703          	lw	a4,-24(s0)
-  9c:	06300793          	li	a5,99
-  a0:	fce7dee3          	bge	a5,a4,7c <main+0x18>
-  a4:	00000793          	li	a5,0
-  a8:	00078513          	mv	a0,a5
-  ac:	01c12403          	lw	s0,28(sp)
-  b0:	02010113          	addi	sp,sp,32
-  b4:	00008067          	ret
+00000060 <main>:
+  60:	fe010113          	addi	sp,sp,-32
+  64:	00812e23          	sw	s0,28(sp)
+  68:	02010413          	addi	s0,sp,32
+  6c:	200007b7          	lui	a5,0x20000
+  70:	fef42223          	sw	a5,-28(s0)
+  74:	00100793          	li	a5,1
+  78:	fef42623          	sw	a5,-20(s0)
+  7c:	0200006f          	j	9c <main+0x3c>
+  80:	fe842703          	lw	a4,-24(s0)
+  84:	fec42783          	lw	a5,-20(s0)
+  88:	00f707b3          	add	a5,a4,a5
+  8c:	fef42423          	sw	a5,-24(s0)
+  90:	fec42783          	lw	a5,-20(s0)
+  94:	00178793          	addi	a5,a5,1 # 20000001 <__bss_start+0x1>
+  98:	fef42623          	sw	a5,-20(s0)
+  9c:	fec42703          	lw	a4,-20(s0)
+  a0:	06300793          	li	a5,99
+  a4:	fce7dee3          	bge	a5,a4,80 <main+0x20>
+  a8:	fe442783          	lw	a5,-28(s0)
+  ac:	fe842703          	lw	a4,-24(s0)
+  b0:	00e7a023          	sw	a4,0(a5)
+  b4:	00000793          	li	a5,0
+  b8:	00078513          	mv	a0,a5
+  bc:	01c12403          	lw	s0,28(sp)
+  c0:	02010113          	addi	sp,sp,32
+  c4:	00008067          	ret
 
 Disassembly of section .stack:
 
-1fffc000 <__freertos_irq_stack_top-0x8000>:
+1fff8400 <__freertos_irq_stack_top-0x8000>:
 	...
 
 Disassembly of section .comment:
@@ -70,11 +74,11 @@ Disassembly of section .comment:
    4:	2820                	fld	fs0,80(s0)
    6:	20554e47          	fmsub.s	ft8,fa0,ft5,ft4,rmm
    a:	434d                	li	t1,19
-   c:	2055                	jal	b0 <main+0x4c>
+   c:	2055                	jal	b0 <main+0x50>
    e:	6345                	lui	t1,0x11
   10:	696c                	flw	fa1,84(a0)
   12:	7370                	flw	fa2,100(a4)
-  14:	2065                	jal	bc <_data_lma+0x4>
+  14:	2065                	jal	bc <main+0x5c>
   16:	4952                	lw	s2,20(sp)
   18:	562d4353          	0x562d4353
   1c:	4520                	lw	s0,72(a0)

@@ -2,15 +2,15 @@
  * Description  : ram
  * Author       : Zhengyi Zhang
  * Date         : 2021-12-12 00:37:22
- * LastEditTime : 2021-12-18 12:22:27
+ * LastEditTime : 2021-12-18 23:56:57
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\perips\ram.v
  */
 `include "../headers/buceros_header.v"
 
 module ram
-#(parameter RAM_DEPTH = 4096,
-  parameter RAM_DEPTH_BIT_LEN = 12)
+#(parameter RAM_DEPTH = 256,
+  parameter RAM_DEPTH_BIT_LEN = 8)
 (
     input  wire               clk,
     input  wire               rst_n,

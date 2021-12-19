@@ -108,7 +108,7 @@
      assign rmem_en_o   = inst_load;
  
      assign pc2pcreg_o = {{`INST_ADDR_W{inst_type_B | inst_jal}}} & (pc_i + imm_o) |
-                         {{`INST_ADDR_W{inst_jalr}}}              & (pc_i + imm_o + rs1_data_o);
+                         {{`INST_ADDR_W{inst_jalr}}}              & (imm_o + rs1_data_o);
      assign pc2ex_o = pc_i;
                    
      assign rs_diff_signed = rs1_data_o[`REG_DATA_W-1] ^ rs2_data_o[`REG_DATA_W-1];

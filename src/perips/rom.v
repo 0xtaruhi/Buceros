@@ -2,15 +2,15 @@
  * Description  : 
  * Author       : Zhengyi Zhang
  * Date         : 2021-12-12 00:37:22
- * LastEditTime : 2021-12-18 12:22:10
+ * LastEditTime : 2021-12-18 23:57:05
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\perips\rom.v
  */
 `include "../headers/buceros_header.v"
 
 module rom
-#(parameter ROM_DEPTH = 1024, //16384
-  parameter ROM_DEPTH_BIT_LEN = 10) //14
+#(parameter ROM_DEPTH = 256, //16384
+  parameter ROM_DEPTH_BIT_LEN = 8) //14
 (
     input  wire               clk,
     input  wire               rst_n,
