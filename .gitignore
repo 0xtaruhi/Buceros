@@ -7,3 +7,4 @@ doc/*
 !doc/document.tex
 .VSCodeCounter
 compiler/*
+tests/common.mk

@@ -51,7 +51,7 @@ module ex (
     assign exe_sub = funct7_i[5] & opcode_i[5];
     assign exe_shift_arith = funct7_i[5];
 
-    assign result_sum   = rs1_data_i + (exe_sub ^ data2 + exe_sub);
+    assign result_sum   = rs1_data_i + (({`REG_DATA_W{exe_sub}} ^ data2) + exe_sub);
     assign result_sl    = rs1_data_i << shift_num;
     assign result_slt   = rs1_data_i[`REG_DATA_W - 1] ^ data2[`REG_DATA_W - 1] ? rs1_data_i[`REG_DATA_W - 1] : rs1_data_i[`REG_DATA_W - 2:0] < data2[`REG_DATA_W - 2:0];
     assign result_sltu  = rs1_data_i < data2;

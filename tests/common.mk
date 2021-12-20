@@ -1,4 +1,5 @@
-RISCV_PATH := $(TOOLCHAIN_DIR)/compiler/8.2.0-2.2-20190521-0004/
+# RISCV_PATH := $(TOOLCHAIN_DIR)/compiler/8.2.0-2.2-20190521-0004/
+RISCV_PATH := $(TOOLCHAIN_DIR)/compiler/xpack-riscv-none-embed-gcc-10.2.0-1.2/
 
 RISCV_GCC     := $(abspath $(RISCV_PATH)/bin/riscv-none-embed-gcc)
 RISCV_AS      := $(abspath $(RISCV_PATH)/bin/riscv-none-embed-as)
@@ -45,4 +46,4 @@ $(C_OBJS): %.o: %.c
 
 .PHONY: clean
 clean:
-	rm -f $(CLEAN_OBJS)
+	rm -Force $(CLEAN_OBJS)
