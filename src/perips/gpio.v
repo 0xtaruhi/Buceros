@@ -52,7 +52,6 @@ module gpio (
     // sw 0x5000_0000 - 0x5000_0001
     assign sw_en      = addr_i[28];
     assign r_sw       = r_en & sw_en;
-    assign w_sw       = w_en & sw_en;
 
     assign pin_seg_sel_o = ~seg_sel;
     assign pin_seg_o     = seg;
