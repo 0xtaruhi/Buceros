@@ -2,25 +2,23 @@
  * Description  : 
  * Author       : Zhengyi Zhang
  * Date         : 2021-12-19 13:36:58
- * LastEditTime : 2021-12-20 11:28:38
+ * LastEditTime : 2021-12-21 21:12:59
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\tests\temp\temp.c
  */
 
+#include <stdint.h>
+#include "../include/gpio.h"
+
 int main()
 {
-    int* ram_ptr = (void*)0x20000000;
-    int i, j, k;
-    for(i = 2; i < 100; i++){
-        k = 1;
-        for(j = 2; j < i; j++){
-            if(i % j == 0){
-                k = 0;
-                break;
-            }
+    volatile uint32_t led_data = 0x1;
+    while(1){
+        led_data *= 2;
+        if(led_data == 0x10000){
+            led_data = 0x1;
         }
-        if(k == 1){
-            *(ram_ptr++) = i;
-        }
+        GPIO_REG(GPIO_LED) = led_data;
+        for(volatile uint32_t i = 0; i != 500000; ++i);
     }
 }

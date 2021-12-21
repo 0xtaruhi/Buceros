@@ -17,7 +17,8 @@ module ctrl (
     assign stall_o[1] = stallreq_id_ex_i;   // to if_id
     assign stall_o[2] = stallreq_id_ex_i;   // to id_ex
     assign stall_o[3] = 1'b0;               // to ex_mem
-    assign stall_o[4] = stallreq_id_ex_i;   // to mem_wb
+    // assign stall_o[4] = stallreq_id_ex_i;   // to mem_wb
+    assign stall_o[4] = 1'b0; 
     // assign stall_o[5] = stallreq_id_ex_i;   // to regfile
 
     // version 1.0
