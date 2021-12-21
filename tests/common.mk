@@ -1,4 +1,5 @@
-RISCV_PATH := $(TOOLCHAIN_DIR)/compiler/8.2.0-2.2-20190521-0004/
+# RISCV_PATH := $(TOOLCHAIN_DIR)/compiler/8.2.0-2.2-20190521-0004/
+RISCV_PATH := $(TOOLCHAIN_DIR)/compiler/xpack-riscv-none-embed-gcc-10.2.0-1.2/
 
 RISCV_GCC     := $(abspath $(RISCV_PATH)/bin/riscv-none-embed-gcc)
 RISCV_AS      := $(abspath $(RISCV_PATH)/bin/riscv-none-embed-as)
@@ -16,7 +17,7 @@ ASM_SRCS += $(COMMON_DIR)/start.S
 
 LINKER_SCRIPT = $(COMMON_DIR)/link.lds
 
-INCLUDES += -I(COMMON_DIR)
+INCLUDES += -I$(COMMON_DIR)
 
 LDFLAGS += -T $(LINKER_SCRIPT) -nostartfiles -Wl,--gc-sections -Wl,--check-sections
 
@@ -36,6 +37,7 @@ $(TARGET): $(LINK_OBJS) $(LINK_DEPS) Makefile
 	$(RISCV_GCC) $(CFLAGS) $(INCLUDES) $(LINK_OBJS) -o $@ $(LDFLAGS)
 	$(RISCV_OBJCOPY) -O binary $@ $@.bin
 	$(RISCV_OBJDUMP) --disassemble-all $@ > $@.dump
+	python.exe $(COMMON_DIR)/bin2mem.py $@.bin
 
 $(ASM_OBJS): %.o: %.S
 	$(RISCV_GCC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
@@ -45,4 +47,4 @@ $(C_OBJS): %.o: %.c
 
 .PHONY: clean
 clean:
-	rm -f $(CLEAN_OBJS)
+	rm -Force $(CLEAN_OBJS)

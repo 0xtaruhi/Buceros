@@ -2,8 +2,13 @@
 Buceros_FPGA
 .metals
 .vscode
-doc/*
-!doc/document.pdf
-!doc/document.tex
+doc/document.aux
+doc/document.log
+doc/document.out
+doc/document.synctex.gz
+doc/elegantpaper-cn.tex
+doc/elegantpaper-cn.pdf
+doc/elegantpaper-cn.synctex,gz
 .VSCodeCounter
 compiler/*
+tests/common.mk

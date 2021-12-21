@@ -2,7 +2,7 @@
  * Description  : 
  * Author       : Zhengyi Zhang
  * Date         : 2021-12-06 21:19:00
- * LastEditTime : 2021-12-16 15:16:00
+ * LastEditTime : 2021-12-19 22:15:26
  * LastEditors  : Zhengyi Zhang
  * FilePath     : \Buceros\src\core\id.v
  */
@@ -117,8 +117,10 @@
      assign rs1_lt_rs2  = rs_diff_signed ? rs1_data_o[`REG_DATA_W-1] : rs1_ltu_rs2_exclude_msb;
      assign rs1_eq_rs2  = rs1_data_o == rs2_data_o;
  
-     assign branch_o    = inst_branch & (funct3_o[0] ^ (~funct3_o[2] & ~funct3_o[1] & rs1_eq_rs2 |          // 00  beq
-                                         funct3_o[2] & ~funct3_o[1] & rs1_lt_rs2 |           // 10  blt
-                                         funct3_o[2] & funct3_o[1] & rs1_ltu_rs2))
-                          | inst_jal | inst_jalr;           // 11  bltu
+    //  assign branch_o    = inst_branch & (funct3_o[0] ^ (~funct3_o[2] & ~funct3_o[1] & rs1_eq_rs2) |          // 00  beq
+    //                                      funct3_o[0] ^ (funct3_o[2] & ~funct3_o[1] & rs1_lt_rs2) |           // 10  blt
+    //                                      funct3_o[0] ^ (funct3_o[2] & funct3_o[1] & rs1_ltu_rs2))
+     assign branch_o = inst_branch & ( ~funct3_o[2] & ~funct3_o[1] & (funct3_o[0] ^ rs1_eq_rs2) |
+                                        funct3_o[2] & ~funct3_o[1] & (funct3_o[0] ^ rs1_lt_rs2) |
+                                        funct3_o[2] &  funct3_o[1] & (funct3_o[0] ^ rs1_ltu_rs2)) | inst_jal | inst_jalr;
  endmodule //id

@@ -1,5 +1,4 @@
-\documentclass[lang=cn,11pt,a4paper]{elegantpaper}
-\usepackage{geometry}
+\documentclass[lang=cn,11pt,a4paper,chinesefont=founder]{elegantpaper}
 \usepackage{indentfirst} 
 \usepackage{graphicx} 
 \usepackage{subfigure}
@@ -16,89 +15,98 @@
 
 \maketitle
 \begin{figure}[h]
-	\centering			
-	\includegraphics[scale=0.1]{buceros}
-\end{figure} 
+    \centering
+    \includegraphics[scale=0.1]{buceros}
+\end{figure}
 \begin{abstract}
-    本文介绍了Buceros团队制作的简单的RISC-V SOC，以五级流水线的操作，可以实现70MHz以上的时钟频率，较之于网上的RISC-V 代码有了更多精进改善之处，从而更好的节省了资源，提高了运行速度。
+    本文介绍了Buceros团队制作的简单的RISC-V SOC, 以五级流水线的操作, 可以实现70MHz以上的时钟频率, 较之于网上的RISC-V 代码有了更多精进改善之处, 从而更好的节省了资源, 提高了运行速度. 
     \keywords{中央处理器, RISC-V指令集, SOC}
 \end{abstract}
 		
 
+
 \section{概述}
 \begin{figure}[h]
-	\centering			
-	\includegraphics[scale=0.4]{总结构图}
-	\caption{总结构图}
-\end{figure} 
-	\begin{enumerate}
-		
-		\item \textbf{core-top核心模块}\\   
-		\begin{figure}[h]
-			\centering			
-			\includegraphics[scale=0.5]{coretop}
-		\end{figure} 
-		 本CPU按照PC寄存器（PC），取指(IF)，译码(ID)，执行(EX)，访存/回写(MEM/WB)的顺序设计五级流水线，这五者加上ctrl模块及各级寄存器组构成了core-top模块，实现了CPU的核心功能，实现了对RV32I指令集的完美译码、执行，实现了本次实验的需求。
-		\item \textbf{RV32I指令集} \\
-		 与大多数指令集相比，RISC-V指令集可以自由地用于任何目的，允许任何人设计、制造和销售RISC-V芯片和软件。虽然这不是第一个开源指令集，但它具有重要意义，因为其设计使其适用于现代计算设备（如仓库规模云计算机、高端移动电话和微小嵌入式系统）。设计者考虑到了这些用途中的性能与功率效率。该指令集还具有众多支持的软件，这解决了新指令集通常的弱点。\\
-		 因此，本CPU采用RV32I指令集索引,并成功实现对U/J/I/B/R/S 六类指令的编译。
-		 \begin{figure}
-		 	\centering
-		 	\includegraphics[width=0.7\linewidth]{指令集索引}
-		 	\caption{RV32I指令集索引}
-		 	\label{fig:}
-		 \end{figure}
-		 
-		\item \textbf{外设模块 }
-		\begin{enumerate}
-			\item \textbf{bui模块}
-			作为外设的选择模块，起到了对ram和gpio模块的选择作用，通过接收mem模块输入的读/写信号及地址信息，对不同的外设进行读/写操作，并将需要的读出来的数据返回给mem/wb模块和id模块使用
-			\item \textbf{ram模块} 
-			作为读/写数据的主要存储模块，是整个CPU的数据“仓库”
-			\item \textbf{gpio模块} 同ram模块一样为一组寄存器组，包含了对十六个按键开关、七段数码管、四个七段数码管选择开关、十六盏LED灯的状态信息，可以控制上述四类外设是否读取或者写入数据。
-			\item \textbf{rom模块} 
-			功能为存储各类指令的内容，出于方便更新指令的考虑，将rom模块也写成具有读/写功能的模块，但在正常运行时其写端口信号始终不使能。
-		\end{enumerate}
-			\item\textbf{ C编译器 }\\
-			本项目采用网络上的开源C编译器实现从C语言到汇编语言及机器码的转换，并输入到ROM中，从而使得CPU的功能设计变得多样化和便利化。
-	\end{enumerate}
+    \centering
+    \includegraphics[scale=0.4]{总结构图}
+    \caption{总结构图}
+\end{figure}
+\subsection{core\_top核心模块}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.5]{coretop}
+\end{figure}
+本CPU按照取指(IF), 译码(ID), 执行(EX), 访存(MEM), 回写(WB)的顺序设计五级流水线, 这五者加上ctrl模块及各级寄存器组构成了core\_top模块, 实现了CPU的核心功能, 实现了对RV32I指令集的译码、执行
+(不包括ecall和ebreak指令), 实现了本次实验的需求. 
+\subsection{RV32I指令集}
+与大多数指令集相比, RISC-V指令集可以自由地用于任何目的, 允许任何人设计、制造和销售RISC-V芯片和软件. 虽然这不是第一个开源指令集, 但它具有重要意义, 
+因为其设计使其适用于现代计算设备（如仓库规模云计算机、高端移动电话和微小嵌入式系统）. 设计者考虑到了这些用途中的性能与功率效率. 
+该指令集还具有众多支持的软件, 这解决了新指令集通常的弱点. 
+
+%   \input{rv32i.tex}
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{ISA.png}
+    \caption{RV32I指令集索引}
+    \label{fig:}
+\end{figure}
+\subsection{外设模块}
+\begin{enumerate}
+    \item \textbf{bui模块}
+          作为外设的选择模块, 起到了对ram和gpio模块的选择作用, 通过接收mem模块输入的读/写信号及地址信息, 对不同的外设进行读/写操作, 并将需要的读出来的数据返回给mem/wb模块和id模块使用
+    \item \textbf{ram模块}
+          作为读/写数据的主要存储模块, 是整个CPU的数据“仓库”
+    \item \textbf{gpio模块} 同ram模块一样为一组寄存器组, 包含了对十六个按键开关、七段数码管、四个七段数码管选择开关、十六盏LED灯的状态信息, 可以控制上述四类外设是否读取或者写入数据. 
+    \item \textbf{rom模块}
+          功能为存储各类指令的内容, 出于方便更新指令的考虑, 将rom模块也写成具有读/写功能的模块, 但在正常运行时其写端口信号始终不使能. 
+\end{enumerate}
+\subsection{编译器}
+本项目采用开源的GCC编译器编译C语言程序, 并输入到ROM中, 从而使得CPU的功能设计变得多样化和便利化. 
+
+我们使用的GCC是由eclipse维护的, 使用的版本为xpack-riscv-none-embed-gcc-10.2.0-1.2. 
+
+\subsection{项目管理}
+
+本次实验全程使用git进行代码管理, 并且将改动实时同步到GitHub上. 本次CPU的代码是完全开源的, 任何人都可以看到我们写的内容, 
+甚至为我们提交一些更改. 
+
 \section{CPU各模块实现方式及亮点特色}
-\subsection{core-top核心模块}
-\subsubsection{core-top}
+\subsection{core\_top核心模块}
+\subsubsection{core\_top}
 \begin{tabular}{cclll}
-	\toprule
-	I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-	\midrule
-	input &wire& clk & 时钟信号 & 1 \\
-	input &wire& rst-n & 异步复位信号（低电平使能） & 1 \\
-	input &wire& io-enter & 流水线恢复信号       & 1   \\
-	
-	input &wire& inst-i & 指令寄存器读指令数据端口 & `WordBus \\
-	input &wire& rmem-data-i & 内存读数据端口 & `WordBus  \\
-	
-	output &wire& wmem-en-o & 内存写使能信号    & 1   \\
-	output &wire& rmem-en-o & 内存读使能信号    & 1  \\
-	output &wire& wmem-data-o & 内存或者gpio写数据端口    & `WordBus  \\
-	output &wire& rom-addr-o &  指令寄存器读指令地址端口   & `MemAddrBus  \\
-	output &wire& mem-addr-o &   内存访问地址端口  & `MemAddrBus  \\
-	\bottomrule
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称      & 端口说明                   & 端口位宽    \\
+    \midrule
+    input    & wire     & clk           & 时钟信号                   & 1           \\
+    input    & wire     & rst\_n        & 异步复位信号（低电平使能） & 1           \\
+    input    & wire     & io\_enter     & 流水线恢复信号             & 1           \\
+
+    input    & wire     & inst\_i       & 指令寄存器读指令数据端口   & `WordBus    \\
+    input    & wire     & rmem\_data\_i & 内存读数据端口             & `WordBus    \\
+
+    output   & wire     & wmem\_en\_o   & 内存写使能信号             & 1           \\
+    output   & wire     & rmem\_en\_o   & 内存读使能信号             & 1           \\
+    output   & wire     & wmem\_data\_o & 内存或者gpio写数据端口     & `WordBus    \\
+    output   & wire     & rom\_addr\_o  & 指令寄存器读指令地址端口   & `MemAddrBus \\
+    output   & wire     & mem\_addr\_o  & 内存访问地址端口           & `MemAddrBus \\
+    \bottomrule
 \end{tabular}\\
 \\
-内部集成了流水线的最核心五级，为与外设相连提供了便利。
+内部集成了流水线的最核心五级, 为与外设相连提供了便利. 
 
 \subsubsection{ctrl}
-	\begin{tabular}{cclll}
-		\toprule
-		I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-		\midrule
-		input &wire& rst-n & 异步复位信号（低电平使能） & 1 \\
-		input &wire& stallreq-id-ex-i & 请求暂停信号（来自id/ex模块）       & 1   \\
-		input &wire& enter-i & 流水线恢复信号& 1 \\
-		output &wire& stall-o & 各级流水线暂停端口    & [4:0]   \\
-		\bottomrule
-	\end{tabular}\\
-	\\若ex中正在执行的命令会影响到id中正在执行的命令，id/ex模块会请求暂停其他级流水线使ex模块的命令优先完成，并将需要的数据传输回id，等到传输完毕后id/ex将拉低请求暂停信号，使流水线继续运转。enter-i信号从外部输入使流水线重新运行，消除未知的暂停错误。
-	\begin{lstlisting}[language=verilog]
+\begin{tabular}{cclll}
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称            & 端口说明                      & 端口位宽 \\
+    \midrule
+    input    & wire     & rst\_n              & 异步复位信号（低电平使能）    & 1        \\
+    input    & wire     & stallreq\_id\_ex\_i & 请求暂停信号（来自id/ex模块） & 1        \\
+    input    & wire     & enter\_i            & 流水线恢复信号                & 1        \\
+    output   & wire     & stall\_o            & 各级流水线暂停端口            & [4:0]    \\
+    \bottomrule
+\end{tabular}\\
+\\若ex中正在执行的命令会影响到id中正在执行的命令, id/ex模块会请求暂停其他级流水线使ex模块的命令优先完成, 并将需要的数据传输回id, 等到传输完毕后id/ex将拉低请求暂停信号, 使流水线继续运转. enter\_i信号从外部输入使流水线重新运行, 消除未知的暂停错误. 
+\begin{lstlisting}[language=verilog]
 		assign stall_o[0] = stallreq_id_ex_i;   // to pc_reg
 		assign stall_o[1] = stallreq_id_ex_i;   // to if_id
 		assign stall_o[2] = stallreq_id_ex_i;   // to id_ex
@@ -106,21 +114,21 @@
 		assign stall_o[4] = stallreq_id_ex_i;   // to mem_wb
 		// assign stall_o[5] = stallreq_id_ex_i;   // to regfile
 	\end{lstlisting}
-\subsubsection{pc-reg}
- \begin{tabular}{cclll}
-	\toprule
-	I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-	\midrule
-	input &wire& clk & 时钟信号 & 1 \\
-	input &wire& rst-n & 异步复位信号（低电平使能） & 1 \\
-	input &wire& imp-en-i & 跳转命令使能信号       & 1   \\
-	input &wire& jmp-addr-i & 跳转命令地址端口 & `InstAddrBus \\
-	input &wire&hold-i & 暂停命令 & 1  \\
-	output &reg& pc-o & 命令地址输出端口    & `InstAddrBus   \\
-	\bottomrule
+\subsubsection{pc\_reg}
+\begin{tabular}{cclll}
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称     & 端口说明                   & 端口位宽     \\
+    \midrule
+    input    & wire     & clk          & 时钟信号                   & 1            \\
+    input    & wire     & rst\_n       & 异步复位信号（低电平使能） & 1            \\
+    input    & wire     & imp\_en\_i   & 跳转命令使能信号           & 1            \\
+    input    & wire     & jmp\_addr\_i & 跳转命令地址端口           & `InstAddrBus \\
+    input    & wire     & hold\_i      & 暂停命令                   & 1            \\
+    output   & reg      & pc\_o        & 命令地址输出端口           & `InstAddrBus \\
+    \bottomrule
 \end{tabular}\\
 \\
-此为命令地址计数器，也为流水线的\textbf{第一级}，通过对此处的命令地址进行累加或跳转，从而向rom模块请求不同地址的命令。
+此为命令地址计数器, 也为流水线的\textbf{第一级}, 通过对此处的命令地址进行累加或跳转, 从而向rom模块请求不同地址的命令. 
 \begin{lstlisting}[language=verilog]
     always @(posedge clk or negedge rst_n) begin
 		if(~rst_n) begin
@@ -134,63 +142,63 @@
 		end
 	end
 \end{lstlisting}
-\subsubsection{if-id}
- \begin{tabular}{cclll}
-	\toprule
-	I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-	\midrule
-	input &wire& clk & 时钟信号 & 1 \\
-	input &wire& rst-n & 异步复位信号（低电平使能） & 1 \\
-	input &wire& hold-i & 暂停信号       & 1   \\
-	input &wire& jmp-en-i & 跳转命令使能信号 & 1 \\
-	input &wire&pc-i & 命令地址输入端口 & `InstAddrBus  \\
-	input &wire&inst-i & 命令输入端口 & `InstBus  \\
-	output &reg& pc-o & 命令地址输出端口    & `InstAddrBus   \\
-	output &reg& inst-o & 命令输出端口    & `InstBus   \\
-	\bottomrule
+\subsubsection{if\_id}
+\begin{tabular}{cclll}
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称   & 端口说明                   & 端口位宽     \\
+    \midrule
+    input    & wire     & clk        & 时钟信号                   & 1            \\
+    input    & wire     & rst\_n     & 异步复位信号（低电平使能） & 1            \\
+    input    & wire     & hold\_i    & 暂停信号                   & 1            \\
+    input    & wire     & jmp\_en\_i & 跳转命令使能信号           & 1            \\
+    input    & wire     & pc\_i      & 命令地址输入端口           & `InstAddrBus \\
+    input    & wire     & inst\_i    & 命令输入端口               & `InstBus     \\
+    output   & reg      & pc\_o      & 命令地址输出端口           & `InstAddrBus \\
+    output   & reg      & inst\_o    & 命令输出端口               & `InstBus     \\
+    \bottomrule
 \end{tabular}\\
 \\
-此为取指/译码寄存器组，也为流水线的\textbf{第二级}，将从ROM中提取出来的命令预置在其中，并将命令地址一同传递下去。值得注意的是，当复位使能或跳转信号使能时，将inst—o设置为`nop指令，即“addi x0,x0,0”,通过自增0来表示这是一个空指令，即在跳转指令输入之前先加载一个空指令以实现立即跳转，不执行其他指令的功能。
+此为取指/译码寄存器组, 也为流水线的\textbf{第二级}, 将从ROM中提取出来的命令预置在其中, 并将命令地址一同传递下去. 值得注意的是, 当复位使能或跳转信号使能时, 将inst—o设置为`nop指令, 即“addi x0,x0,0”,通过自增0来表示这是一个空指令, 即在跳转指令输入之前先加载一个空指令以实现立即跳转, 不执行其他指令的功能. 
 
 \subsubsection{id}
 \begin{tabular}{cclll}
-	\toprule
-	I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-	\midrule
-	input &wire& rst-n & 异步复位信号（低电平使能） & 1 \\
-	input &wire& pc-i & 命令地址输入端口       & `InstAddrBus  \\
-	input &wire&inst-i & 命令输入端口 & `InstBus  \\
-	input &wire& ex-wreg-addr-i & 执行模块返回数据写地址端口 & `RegAddrBus \\
-	input &wire& ex-wreg-en-i & 执行模块返回数据写使能信号 & 1  \\
-	input &wire& ex-wreg-data-i  & 执行模块返回数据写数据端口 & `RegDataBus  \\
-	input &wire& mem-wreg-addr-i & 访存模块返回数据写地址端口 & `RegAddrBus \\
-	input &wire& mem-wreg-en-i & 访存模块返回数据写使能信号 & 1  \\
-	input &wire& mem-wreg-data-i  & 访存模块返回数据写数据端口 & `RegDataBus  \\
-	input &wire& wb-wreg-addr-i & 回写模块返回数据写地址端口 & `RegAddrBus \\
-	input &wire& wb-wreg-en-i & 回写模块返回数据写使能信号 & 1  \\
-	input &wire& wb-wreg-data-i  & 回写模块返回数据写数据端口 & `RegDataBus  \\
-	input &wire& rs1-data-i  & 通用寄存器返回数据一号端口 & `RegDataBus  \\
-	input &wire& rs2-data-i  & 通用寄存器返回数据二号端口 & `RegDataBus  \\
-	output &wire& branch-o & 跳转命令使能信号    & 1   \\
-	output &wire& pc2pcreg-o & 跳转命令地址端口    &  `InstAddrBus   \\
-	output &wire& pc2ex-o & 命令地址输出端口    & `InstAddrBus   \\
-	output &wire& wmem-en-o & 访存写使能信号    & 1   \\
-	output &wire& rmem-en-o & 访存读使能信号    & 1   \\
-	output &wire& opcode-o & opcode输出端口    & `OpcodeBus   \\
-	output &wire& funct3-o & funct3输出端口    & `Funct3Bus   \\
-	output &wire& funct7-o & funct7输出端口    & `Funct7Bus   \\
-	output &wire& imm-o & 立即数输出端口    & `ImmBus   \\
-	output &wire& wreg-en-o & 通用寄存器组写使能信号    & 1   \\
-	output &wire& wreg-addr-o & 通用寄存器组写使能地址    & `RegAddrBus  \\
-	output &wire& rs1-addr-o & 通用寄存器组一号地址端口    & `RegAddrBus  \\
-	output &wire& rs1-data-o& 通用寄存器组一号数据端口    & `RegDataBus  \\
-	output &wire& rs2-addr-o & 通用寄存器组二号地址端口    & `RegAddrBus  \\
-	output &wire& rs2-data-o& 通用寄存器组二号数据端口    & `RegDataBus  \\
-	\bottomrule
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称           & 端口说明                   & 端口位宽     \\
+    \midrule
+    input    & wire     & rst\_n             & 异步复位信号（低电平使能） & 1            \\
+    input    & wire     & pc\_i              & 命令地址输入端口           & `InstAddrBus \\
+    input    & wire     & inst\_i            & 命令输入端口               & `InstBus     \\
+    input    & wire     & ex\_wreg\_addr\_i  & 执行模块返回数据写地址端口 & `RegAddrBus  \\
+    input    & wire     & ex\_wreg\_en\_i    & 执行模块返回数据写使能信号 & 1            \\
+    input    & wire     & ex\_wreg\_data\_i  & 执行模块返回数据写数据端口 & `RegDataBus  \\
+    input    & wire     & mem\_wreg\_addr\_i & 访存模块返回数据写地址端口 & `RegAddrBus  \\
+    input    & wire     & mem\_wreg\_en\_i   & 访存模块返回数据写使能信号 & 1            \\
+    input    & wire     & mem\_wreg\_data\_i & 访存模块返回数据写数据端口 & `RegDataBus  \\
+    input    & wire     & wb\_wreg\_addr\_i  & 回写模块返回数据写地址端口 & `RegAddrBus  \\
+    input    & wire     & wb\_wreg\_en\_i    & 回写模块返回数据写使能信号 & 1            \\
+    input    & wire     & wb\_wreg\_data\_i  & 回写模块返回数据写数据端口 & `RegDataBus  \\
+    input    & wire     & rs1\_data\_i       & 通用寄存器返回数据一号端口 & `RegDataBus  \\
+    input    & wire     & rs2\_data\_i       & 通用寄存器返回数据二号端口 & `RegDataBus  \\
+    output   & wire     & branch\_o          & 跳转命令使能信号           & 1            \\
+    output   & wire     & pc2pcreg\_o        & 跳转命令地址端口           & `InstAddrBus \\
+    output   & wire     & pc2ex\_o           & 命令地址输出端口           & `InstAddrBus \\
+    output   & wire     & wmem\_en\_o        & 访存写使能信号             & 1            \\
+    output   & wire     & rmem\_en\_o        & 访存读使能信号             & 1            \\
+    output   & wire     & opcode\_o          & opcode输出端口             & `OpcodeBus   \\
+    output   & wire     & funct3\_o          & funct3输出端口             & `Funct3Bus   \\
+    output   & wire     & funct7\_o          & funct7输出端口             & `Funct7Bus   \\
+    output   & wire     & imm\_o             & 立即数输出端口             & `ImmBus      \\
+    output   & wire     & wreg\_en\_o        & 通用寄存器组写使能信号     & 1            \\
+    output   & wire     & wreg\_addr\_o      & 通用寄存器组写使能地址     & `RegAddrBus  \\
+    output   & wire     & rs1\_addr\_o       & 通用寄存器组一号地址端口   & `RegAddrBus  \\
+    output   & wire     & rs1\_data\_o       & 通用寄存器组一号数据端口   & `RegDataBus  \\
+    output   & wire     & rs2\_addr\_o       & 通用寄存器组二号地址端口   & `RegAddrBus  \\
+    output   & wire     & rs2\_data\_o       & 通用寄存器组二号数据端口   & `RegDataBus  \\
+    \bottomrule
 \end{tabular}\\
 \\
-此模块为五级流水线中\textbf{核心}的译码模块，其将各类命令割分成各个数据或者地址或者使能信号，并传递给其他不同的模块\\
-\textbf{亮点一}：将从其他模块输入的返回数据写地址端口和信号进行优先级区分，即ex>mem>wb>regfile，从而保证当id模块中需要用到的数据正在被ex、mem、wb中的一个操作时能够在最短的时间内将当前数据传回id模块，尽管使用三级数据比较器增大了延迟，但保证了电路工作的可靠性\\
+此模块为五级流水线中\textbf{核心}的译码模块, 其将各类命令割分成各个数据或者地址或者使能信号, 并传递给其他不同的模块\\
+\textbf{亮点一}：将从其他模块输入的返回数据写地址端口和信号进行优先级区分, 即ex>mem>wb>regfile, 从而保证当id模块中需要用到的数据正在被ex、mem、wb中的一个操作时能够在最短的时间内将当前数据传回id模块, 尽管使用三级数据比较器增大了延迟, 但保证了电路工作的可靠性\\
 \begin{lstlisting}[language=verilog]
 assign rs1_data_o  = 
 	   (ex_wreg_en_i && ex_wreg_addr_i == rs1_addr_o)  ? ex_wreg_data_i  :
@@ -203,14 +211,12 @@ assign rs2_data_o  =
 	   (wb_wreg_en_i && wb_wreg_addr_i == rs2_addr_o)   ? wb_wreg_data_i  :
 	   rs2_data_i;
 \end{lstlisting}
-\textbf{亮点二}：其他所有的数据选择或者数据分割采用与或选择方式，大幅度减少了因if、case等逐步选择带来的高延时和高资源使用量。
+\textbf{亮点二}：其他所有的数据选择或者数据分割采用与或选择方式, 大幅度减少了因if、case等逐步选择带来的高延时和高资源使用量. 
 \begin{lstlisting}[language=verilog]
 //例1
-assign branch_o    = inst_branch & 
-	(funct3_o[0] ^ (~funct3_o[2] & ~funct3_o[1] & rs1_eq_rs2 |// 00  beq
-	funct3_o[2] & ~funct3_o[1] & rs1_lt_rs2 |           // 10  blt
-	funct3_o[2] & funct3_o[1] & rs1_ltu_rs2))
-	| inst_jal | inst_jalr;
+assign branch_o = inst_branch & ( ~funct3_o[2] & ~funct3_o[1] & (funct3_o[0] ^ rs1_eq_rs2) |
+funct3_o[2] & ~funct3_o[1] & (funct3_o[0] ^ rs1_lt_rs2) |
+funct3_o[2] &  funct3_o[1] & (funct3_o[0] ^ rs1_ltu_rs2)) | inst_jal | inst_jalr;
 \end{lstlisting}
 \begin{lstlisting}[language=verilog]
 //例2
@@ -221,47 +227,47 @@ assign imm_o = {`IMM_W{inst_type_I}} & {{20{inst_i[31]}}, inst_i[31:20]} |
 	inst_i[31:12]} |{`IMM_W{inst_type_J}} & {{12{inst_i[31]}}, inst_i[19:12],
 	 inst_i[20], inst_i[30:21], 1'b0};
 \end{lstlisting}
-注意：只有我们通用寄存器组一号地址端口的访问地址与ex、mem、wb输出地址相匹配时，id才会提前读取ex、mem、wb这三个端口中的数据
-\subsubsection{id-ex}
+注意：只有我们通用寄存器组一号地址端口的访问地址与ex、mem、wb输出地址相匹配时, id才会提前读取ex、mem、wb这三个端口中的数据
+\subsubsection{id\_ex}
 \begin{tabular}{cclll}
-	\toprule
-	I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-	\midrule
-	input &wire& clk & 时钟信号 & 1 \\
-	input &wire& rst-n & 异步复位信号（低电平使能） & 1 \\
-	input &wire& hold-i & 暂停信号       & 1   \\
-	
-	input &wire& id-pc-i & 命令地址输入端口       & `InstAddrBus  \\
-	input &wire& id-wmem-en-i & 访存写使能信号 & 1 \\
-	input &wire& id-rmem-en-i & 访存读使能信号 & 1 \\
-	input &wire& id-opcode-i & opcode输入端口    & `OpcodeBus   \\
-	input &wire& id-funct3-i & funct3输入端口    & `Funct3Bus   \\
-	input &wire& id-funct7-i & funct7输入端口    & `Funct7Bus   \\
-	input &wire& id-imm-i & 立即数输入端口    & `ImmBus   \\
-	
-	input &wire& id-wreg-addr-i & 通用寄存器数据写地址端口 & `RegAddrBus \\
-	input &wire& id-wreg-en-i & 通用寄存器数据写使能信号 & 1  \\
-	input &wire& id-rs1-data-i  & 通用寄存器返回数据一号端口 & `RegDataBus  \\
-	input &wire& id-rs2-data-i  & 通用寄存器返回数据二号端口 & `RegDataBus  \\
-	
-	output &wire& ex-pc-o & 命令地址输入端口       & `InstAddrBus  \\
-	output &wire& ex-wmem-en-o & 访存写使能信号 & 1 \\
-	output &wire& ex-rmem-en-o & 访存读使能信号 & 1 \\
-	output &wire& ex-opcode-o & opcode输出端口    & `OpcodeBus   \\
-	output &wire& ex-funct3-o & funct3输出端口    & `Funct3Bus   \\
-	output &wire& ex-funct7-o & funct7输出端口    & `Funct7Bus   \\
-	output &wire& ex-imm-o & 立即数输出端口    & `ImmBus   \\
-	output &wire& ex-wreg-en-o & 通用寄存器组写使能信号    & 1   \\
-	output &wire& ex-wreg-addr-o & 通用寄存器组写使能地址    & `RegAddrBus  \\
-	output &wire& rs1-data-o& 通用寄存器组一号数据端口    & `RegDataBus  \\
-	output &wire& rs2-data-o& 通用寄存器组二号数据端口    & `RegDataBus  \\
-	output &wire& stallreq-id-ex-o& 暂停请求信号    & 1 \\
-	\bottomrule
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称            & 端口说明                   & 端口位宽     \\
+    \midrule
+    input    & wire     & clk                 & 时钟信号                   & 1            \\
+    input    & wire     & rst\_n              & 异步复位信号（低电平使能） & 1            \\
+    input    & wire     & hold\_i             & 暂停信号                   & 1            \\
+
+    input    & wire     & id\_pc\_i           & 命令地址输入端口           & `InstAddrBus \\
+    input    & wire     & id\_wmem\_en\_i     & 访存写使能信号             & 1            \\
+    input    & wire     & id\_rmem\_en\_i     & 访存读使能信号             & 1            \\
+    input    & wire     & id\_opcode\_i       & opcode输入端口             & `OpcodeBus   \\
+    input    & wire     & id\_funct3\_i       & funct3输入端口             & `Funct3Bus   \\
+    input    & wire     & id\_funct7\_i       & funct7输入端口             & `Funct7Bus   \\
+    input    & wire     & id\_imm\_i          & 立即数输入端口             & `ImmBus      \\
+
+    input    & wire     & id\_wreg\_addr\_i   & 通用寄存器数据写地址端口   & `RegAddrBus  \\
+    input    & wire     & id\_wreg\_en\_i     & 通用寄存器数据写使能信号   & 1            \\
+    input    & wire     & id\_rs1\_data\_i    & 通用寄存器返回数据一号端口 & `RegDataBus  \\
+    input    & wire     & id\_rs2\_data\_i    & 通用寄存器返回数据二号端口 & `RegDataBus  \\
+
+    output   & wire     & ex\_pc\_o           & 命令地址输入端口           & `InstAddrBus \\
+    output   & wire     & ex\_wmem\_en\_o     & 访存写使能信号             & 1            \\
+    output   & wire     & ex\_rmem\_en\_o     & 访存读使能信号             & 1            \\
+    output   & wire     & ex\_opcode\_o       & opcode输出端口             & `OpcodeBus   \\
+    output   & wire     & ex\_funct3\_o       & funct3输出端口             & `Funct3Bus   \\
+    output   & wire     & ex\_funct7\_o       & funct7输出端口             & `Funct7Bus   \\
+    output   & wire     & ex\_imm\_o          & 立即数输出端口             & `ImmBus      \\
+    output   & wire     & ex\_wreg\_en\_o     & 通用寄存器组写使能信号     & 1            \\
+    output   & wire     & ex\_wreg\_addr\_o   & 通用寄存器组写使能地址     & `RegAddrBus  \\
+    output   & wire     & rs1\_data\_o        & 通用寄存器组一号数据端口   & `RegDataBus  \\
+    output   & wire     & rs2\_data\_o        & 通用寄存器组二号数据端口   & `RegDataBus  \\
+    output   & wire     & stallreq\_id\_ex\_o & 暂停请求信号               & 1            \\
+    \bottomrule
 \end{tabular}\\
 \\
-	本模块为译码/执行模块，也为流水线的\textbf{第三级}。本模块为时序电路，通过统一的时钟控制id信号或端口向ex传递的时序。
-	注意：此处stallreq-id-ex-o为暂停请求信号，每当id模块需要读取内存中数据时，将会从此处发送请求暂停命令，以帮助id能够读到最新状态的数据。
-	\begin{lstlisting}[language=verilog]
+本模块为译码/执行模块, 也为流水线的\textbf{第三级}. 本模块为时序电路, 通过统一的时钟控制id信号或端口向ex传递的时序. 
+注意：此处stallreq\_id\_ex\_o为暂停请求信号, 每当id模块需要读取内存中数据时, 将会从此处发送请求暂停命令, 以帮助id能够读到最新状态的数据. 
+\begin{lstlisting}[language=verilog]
 		//例2
 always @(posedge clk or negedge rst_n) begin
 	if(~rst_n) begin
@@ -273,70 +279,70 @@ always @(posedge clk or negedge rst_n) begin
 	end
 end
 	\end{lstlisting}
-	
+
 \subsubsection{ex}
 \begin{tabular}{cclll}
-	\toprule
-	I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-	\midrule
-	input &wire& pc-i & 命令地址输入端口       & `InstAddrBus  \\
-	input &wire& wmem-en-i & 访存写使能信号 & 1 \\
-	input &wire& rmem-en-i & 访存读使能信号 & 1 \\
-	input &wire& opcode-i & opcode输入端口    & `OpcodeBus   \\
-	input &wire& funct3-i & funct3输入端口    & `Funct3Bus   \\
-	input &wire& funct7-i & funct7输入端口    & `Funct7Bus   \\
-	input &wire& imm-i & 立即数输入端口    & `ImmBus   \\
-	
-	input &wire& wreg-addr-i & 通用寄存器数据写地址端口 & `RegAddrBus \\
-	input &wire& wreg-en-i & 通用寄存器数据写使能信号 & 1  \\
-	input &wire& rs1-data-i  & 通用寄存器返回数据一号端口 & `RegDataBus  \\
-	input &wire& rs2-data-i  & 通用寄存器返回数据二号端口 & `RegDataBus  \\
-	
-	output &wire& wmem-en-o & 访存写使能信号 & 1 \\
-	output &wire& rmem-en-o & 访存读使能信号 & 1 \\
-	output &wire& mem-addr-o &  访存地址端口   & `MemAddrBus   \\
-	output &wire& funct3-o & funct3输出端口    & `Funct3Bus   \\
-	output &wire& wreg-en-o & 通用寄存器组写使能信号    & 1   \\
-	output &wire& wreg-addr-o & 通用寄存器组写地址端口    & `RegAddrBus  \\
-	output &wire& wreg-data-o & 通用寄存器组写数据端口    & `RegDataBus  \\
-	\bottomrule
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称      & 端口说明                   & 端口位宽     \\
+    \midrule
+    input    & wire     & pc\_i         & 命令地址输入端口           & `InstAddrBus \\
+    input    & wire     & wmem\_en\_i   & 访存写使能信号             & 1            \\
+    input    & wire     & rmem\_en\_i   & 访存读使能信号             & 1            \\
+    input    & wire     & opcode\_i     & opcode输入端口             & `OpcodeBus   \\
+    input    & wire     & funct3\_i     & funct3输入端口             & `Funct3Bus   \\
+    input    & wire     & funct7\_i     & funct7输入端口             & `Funct7Bus   \\
+    input    & wire     & imm\_i        & 立即数输入端口             & `ImmBus      \\
+
+    input    & wire     & wreg\_addr\_i & 通用寄存器数据写地址端口   & `RegAddrBus  \\
+    input    & wire     & wreg\_en\_i   & 通用寄存器数据写使能信号   & 1            \\
+    input    & wire     & rs1\_data\_i  & 通用寄存器返回数据一号端口 & `RegDataBus  \\
+    input    & wire     & rs2\_data\_i  & 通用寄存器返回数据二号端口 & `RegDataBus  \\
+
+    output   & wire     & wmem\_en\_o   & 访存写使能信号             & 1            \\
+    output   & wire     & rmem\_en\_o   & 访存读使能信号             & 1            \\
+    output   & wire     & mem\_addr\_o  & 访存地址端口               & `MemAddrBus  \\
+    output   & wire     & funct3\_o     & funct3输出端口             & `Funct3Bus   \\
+    output   & wire     & wreg\_en\_o   & 通用寄存器组写使能信号     & 1            \\
+    output   & wire     & wreg\_addr\_o & 通用寄存器组写地址端口     & `RegAddrBus  \\
+    output   & wire     & wreg\_data\_o & 通用寄存器组写数据端口     & `RegDataBus  \\
+    \bottomrule
 \end{tabular}\\
 \\
-本模块为五级流水线中核心的执行模块，通过对不同指令做对应的基础操作，从而将计算得到的结果输出到对应的内存中或者转存到通用寄存器组中。
-\textbf{注意一：}经过本次操作后，funct7不再存在利用价值，而funct3还将决定之后存储到内存中的方式，包括字节加载、半字加载、字加载、字节加载、半字加载等操作。
-\textbf{注意二：}内存的访问地址由rs1-data-i 和 imm-i 相加得到，其中rs1-data-i 可以由rom中的指令用立即数左移直接加载得到（LUI指令），而imm-i可以提前由rom中的指令预置好，因此，每一步内存的访问地址都已经由rom中指令决定好了。
+本模块为五级流水线中核心的执行模块, 通过对不同指令做对应的基础操作, 从而将计算得到的结果输出到对应的内存中或者转存到通用寄存器组中. 
+\textbf{注意一：}经过本次操作后, funct7不再存在利用价值, 而funct3还将决定之后存储到内存中的方式, 包括字节加载、半字加载、字加载、字节加载、半字加载等操作. 
+\textbf{注意二：}内存的访问地址由rs1\_data\_i 和 imm\_i 相加得到, 其中rs1\_data\_i 可以由rom中的指令用立即数左移直接加载得到（LUI指令）, 而imm\_i可以提前由rom中的指令预置好, 因此, 每一步内存的访问地址都已经由rom中指令决定好了. 
 \begin{lstlisting}[language=verilog]
 assign mem_addr_o   = rs1_data_i + imm_i;
 \end{lstlisting}
-\subsubsection{ex-mem}
+\subsubsection{ex\_mem}
 \begin{tabular}{cclll}
-	\toprule
-	I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-	\midrule
-	input &wire& clk & 时钟信号 & 1 \\
-	input &wire& rst-n & 异步复位信号（低电平使能） & 1 \\
-	input &wire& hold-i & 暂停信号       & 1   \\
-	
-	input &wire& ex-wmem-en-i & 访存写使能信号 & 1 \\
-	input &wire& ex-rmem-en-i & 访存读使能信号 & 1 \\
-	input &wire& ex-mem-addr-i &  访存地址端口   & `MemAddrBus   \\
-	input &wire& ex-funct3-i & funct3输入端口    & `Funct3Bus   \\
-	input &wire& ex-wreg-addr-i & 通用寄存器数据写地址端口 & `RegAddrBus \\
-	input &wire& ex-wreg-en-i & 通用寄存器数据写使能信号 & 1  \\
-	input &wire& ex-wreg-data-i & 通用寄存器数据写数据端口 & `RegDataBus  \\
-	
-	output &wire& mem-wmem-en-o & 访存写使能信号 & 1 \\
-	output &wire& mem-rmem-en-o & 访存读使能信号 & 1 \\
-	output &wire& mem-mem-addr-o &  访存地址端口   & `MemAddrBus   \\
-	output &wire& mem-funct3-o & funct3输出端口    & `Funct3Bus   \\
-	output &wire& mem-wreg-en-o & 通用寄存器组写使能信号    & 1   \\
-	output &wire& mem-wreg-addr-o & 通用寄存器组写地址端口    & `RegAddrBus  \\
-	output &wire& mem-wreg-data-o & 通用寄存器组写数据端口    & `RegDataBus  \\
-	\bottomrule
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称           & 端口说明                   & 端口位宽    \\
+    \midrule
+    input    & wire     & clk                & 时钟信号                   & 1           \\
+    input    & wire     & rst\_n             & 异步复位信号（低电平使能） & 1           \\
+    input    & wire     & hold\_i            & 暂停信号                   & 1           \\
+
+    input    & wire     & ex\_wmem\_en\_i    & 访存写使能信号             & 1           \\
+    input    & wire     & ex\_rmem\_en\_i    & 访存读使能信号             & 1           \\
+    input    & wire     & ex\_mem\_addr\_i   & 访存地址端口               & `MemAddrBus \\
+    input    & wire     & ex\_funct3\_i      & funct3输入端口             & `Funct3Bus  \\
+    input    & wire     & ex\_wreg\_addr\_i  & 通用寄存器数据写地址端口   & `RegAddrBus \\
+    input    & wire     & ex\_wreg\_en\_i    & 通用寄存器数据写使能信号   & 1           \\
+    input    & wire     & ex\_wreg\_data\_i  & 通用寄存器数据写数据端口   & `RegDataBus \\
+
+    output   & wire     & mem\_wmem\_en\_o   & 访存写使能信号             & 1           \\
+    output   & wire     & mem\_rmem\_en\_o   & 访存读使能信号             & 1           \\
+    output   & wire     & mem\_mem\_addr\_o  & 访存地址端口               & `MemAddrBus \\
+    output   & wire     & mem\_funct3\_o     & funct3输出端口             & `Funct3Bus  \\
+    output   & wire     & mem\_wreg\_en\_o   & 通用寄存器组写使能信号     & 1           \\
+    output   & wire     & mem\_wreg\_addr\_o & 通用寄存器组写地址端口     & `RegAddrBus \\
+    output   & wire     & mem\_wreg\_data\_o & 通用寄存器组写数据端口     & `RegDataBus \\
+    \bottomrule
 \end{tabular}\\
 \\
-本模块为五级流水线中的ex/mem 模块，也是流水线中的\textbf{第四级}。起到了缓存数据，统一时序的功能。
-\textbf{注意：}各级的寄存器组采用gen-dffr和gen-dffsr来模仿D触发器组功能。
+本模块为五级流水线中的ex/mem 模块, 也是流水线中的\textbf{第四级}. 起到了缓存数据, 统一时序的功能. 
+\textbf{注意：}各级的寄存器组采用gen\_dffr和gen\_dffsr来模仿D触发器组功能. 
 \begin{lstlisting}[language=verilog]
 gen_dffr #(.WIDTH(       1'b1)) dff_wmem_en  (clk, rst_n, hold_i, ex_wmem_en_i, mem_wmem_en_o);
 gen_dffr #(.WIDTH(       1'b1)) dff_rmem_en  (clk, rst_n, hold_i, ex_rmem_en_i, mem_rmem_en_o);
@@ -348,39 +354,39 @@ gen_dffr #(.WIDTH(`REG_DATA_W)) dff_wreg_data(clk, rst_n, hold_i, ex_wreg_data_i
 \end{lstlisting}
 \subsubsection{mem}
 \begin{tabular}{cclll}
-	\toprule
-	I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-	\midrule
-	input &wire& wmem-en-i & 访存写使能信号 & 1 \\
-	input &wire& rmem-en-i & 访存读使能信号 & 1 \\
-	input &wire& mem-addr-i &  访存地址端口   & `MemAddrBus   \\
-	input &wire& rmem-data-i &  来自内存的读取数据端口   & `MemDataBus   \\
-	input &wire& funct3-i & funct3输入端口    & `Funct3Bus   \\
-	input &wire& wreg-addr-i & 通用寄存器数据写地址端口 & `RegAddrBus \\
-	input &wire& wreg-en-i & 通用寄存器数据写使能信号 & 1  \\
-	input &wire& wreg-data-i & 通用寄存器/内存数据写数据端口 & `RegDataBus  \\
-	
-	output &wire& wmem-en-o & 访存写使能信号 & 1 \\
-	output &wire& rmem-en-o & 访存读使能信号 & 1 \\
-	output &wire& mem-addr-o &  访存地址端口   & `MemAddrBus   \\
-	output &wire& wmem-data-o &  写内存数据端口   & `WordBus   \\	
-	output &wire& wreg-en-o & 通用寄存器组写使能信号    & 1   \\
-	output &wire& wreg-addr-o & 通用寄存器组写地址端口    & `RegAddrBus  \\
-	output &wire& wreg-data-o & 通用寄存器组写数据端口    & `RegDataBus  \\
-	\bottomrule
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称      & 端口说明                      & 端口位宽    \\
+    \midrule
+    input    & wire     & wmem\_en\_i   & 访存写使能信号                & 1           \\
+    input    & wire     & rmem\_en\_i   & 访存读使能信号                & 1           \\
+    input    & wire     & mem\_addr\_i  & 访存地址端口                  & `MemAddrBus \\
+    input    & wire     & rmem\_data\_i & 来自内存的读取数据端口        & `MemDataBus \\
+    input    & wire     & funct3\_i     & funct3输入端口                & `Funct3Bus  \\
+    input    & wire     & wreg\_addr\_i & 通用寄存器数据写地址端口      & `RegAddrBus \\
+    input    & wire     & wreg\_en\_i   & 通用寄存器数据写使能信号      & 1           \\
+    input    & wire     & wreg\_data\_i & 通用寄存器/内存数据写数据端口 & `RegDataBus \\
+
+    output   & wire     & wmem\_en\_o   & 访存写使能信号                & 1           \\
+    output   & wire     & rmem\_en\_o   & 访存读使能信号                & 1           \\
+    output   & wire     & mem\_addr\_o  & 访存地址端口                  & `MemAddrBus \\
+    output   & wire     & wmem\_data\_o & 写内存数据端口                & `WordBus    \\
+    output   & wire     & wreg\_en\_o   & 通用寄存器组写使能信号        & 1           \\
+    output   & wire     & wreg\_addr\_o & 通用寄存器组写地址端口        & `RegAddrBus \\
+    output   & wire     & wreg\_data\_o & 通用寄存器组写数据端口        & `RegDataBus \\
+    \bottomrule
 \end{tabular}\\
 \\
-本模块为五级流水线中的核心模块，即访存模块。wreg-data-o既可以输入到通用寄存器组中，也可以输入到内存当中，其选择由各个使能信号决定。而wreg-data-o与wmem-data-o由wreg-data-i根据funct3-i与使能信号选择性加载得到，实现了指令的功能。
-注意：此处对写入的数据进行字节加载、半字加载、字加载、字节加载、半字加载等操作。
+本模块为五级流水线中的核心模块, 即访存模块. wreg\_data\_o既可以输入到通用寄存器组中, 也可以输入到内存当中, 其选择由各个使能信号决定. 而wreg\_data\_o与wmem\_data\_o由wreg\_data\_i根据funct3\_i与使能信号选择性加载得到, 实现了指令的功能. 
+注意：此处对写入的数据进行字节加载、半字加载、字加载、字节加载、半字加载等操作. 
 \begin{lstlisting}[language=verilog]
 always @ (*) begin
 	if (wmem_en_i) begin
 		case (funct3_i)
 			`INST_BYTE: begin
-				wmem_data_r = {{(`ROM_WIDTH - `BYTE_WIDTH){1'b0}},wreg_data_i[`BYTE_WIDTH - 1:0]};
+				wmem_data_r = {{(`ROM_WIDTH \_ `BYTE_WIDTH){1'b0}},wreg_data_i[`BYTE_WIDTH \_ 1:0]};
 			end
 			`INST_HALF_WORD: begin
-				wmem_data_r = {{(`ROM_WIDTH - `HALF_WORD_WIDTH){1'b0}},wreg_data_i[`HALF_WORD_WIDTH - 1:0]};
+				wmem_data_r = {{(`ROM_WIDTH \_ `HALF_WORD_WIDTH){1'b0}},wreg_data_i[`HALF_WORD_WIDTH \_ 1:0]};
 			end
 			`INST_WORD: begin
 				wmem_data_r = wreg_data_i; // not extended to ARCH_RV64, so the code has been simplified
@@ -394,19 +400,19 @@ always @ (*) begin
 		wmem_data_r = `ZERO_WORD;
 		case (funct3_i)
 			`INST_BYTE: begin
-				wreg_data_r = {{(`ROM_WIDTH - `BYTE_WIDTH){rmem_data_i[`BYTE_WIDTH - 1]}},rmem_data_i[`BYTE_WIDTH - 1:0]};
+				wreg_data_r = {{(`ROM_WIDTH \_ `BYTE_WIDTH){rmem_data_i[`BYTE_WIDTH \_ 1]}},rmem_data_i[`BYTE_WIDTH \_ 1:0]};
 			end
 			`INST_HALF_WORD: begin
-				wreg_data_r = {{(`ROM_WIDTH - `HALF_WORD_WIDTH){rmem_data_i[`HALF_WORD_WIDTH - 1]}},rmem_data_i[`HALF_WORD_WIDTH - 1]};
+				wreg_data_r = {{(`ROM_WIDTH \_ `HALF_WORD_WIDTH){rmem_data_i[`HALF_WORD_WIDTH \_ 1]}},rmem_data_i[`HALF_WORD_WIDTH \_ 1]};
 			end
 			`INST_WORD: begin
 				wreg_data_r = rmem_data_i; // not extended to ARCH_RV64, so the code has been simplified
 			end
 			`INST_BYTE_U: begin
-				wreg_data_r = {{(`ROM_WIDTH - `BYTE_WIDTH){1'b0}},rmem_data_i[`BYTE_WIDTH - 1:0]};
+				wreg_data_r = {{(`ROM_WIDTH \_ `BYTE_WIDTH){1'b0}},rmem_data_i[`BYTE_WIDTH \_ 1:0]};
 			end
 			`INST_HALF_WORD_U: begin
-				wreg_data_r = {{(`ROM_WIDTH - `HALF_WORD_WIDTH){1'b0}},rmem_data_i[`HALF_WORD_WIDTH - 1]};
+				wreg_data_r = {{(`ROM_WIDTH \_ `HALF_WORD_WIDTH){1'b0}},rmem_data_i[`HALF_WORD_WIDTH \_ 1]};
 			end
 			default: begin
 				wreg_data_r = `ZERO_WORD;
@@ -418,48 +424,48 @@ always @ (*) begin
 		end
 	end
 \end{lstlisting}
-\subsubsection{mem-wb}
+\subsubsection{mem\_wb}
 \begin{tabular}{cclll}
-	\toprule
-	I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-	\midrule
-	input &wire& clk & 时钟信号 & 1 \\
-	input &wire& rst-n & 异步复位信号（低电平使能） & 1 \\
-	input &wire& hold-i & 暂停信号       & 1   \\
-	
-	input &wire& mem-wreg-addr-i & 通用寄存器数据写地址端口 & `RegAddrBus \\
-	input &wire& mem-wreg-en-i & 通用寄存器数据写使能信号 & 1  \\
-	input &wire& mem-wreg-data-i & 通用寄存器写数据端口 & `RegDataBus  \\
-	
-	output &wire& wb-wreg-en-o & 通用寄存器组写使能信号    & 1   \\
-	output &wire& wb-wreg-addr-o & 通用寄存器组写地址端口    & `RegAddrBus  \\
-	output &wire& wb-wreg-data-o & 通用寄存器组写数据端口    & `RegDataBus  \\
-	\bottomrule
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称           & 端口说明                   & 端口位宽    \\
+    \midrule
+    input    & wire     & clk                & 时钟信号                   & 1           \\
+    input    & wire     & rst\_n             & 异步复位信号（低电平使能） & 1           \\
+    input    & wire     & hold\_i            & 暂停信号                   & 1           \\
+
+    input    & wire     & mem\_wreg\_addr\_i & 通用寄存器数据写地址端口   & `RegAddrBus \\
+    input    & wire     & mem\_wreg\_en\_i   & 通用寄存器数据写使能信号   & 1           \\
+    input    & wire     & mem\_wreg\_data\_i & 通用寄存器写数据端口       & `RegDataBus \\
+
+    output   & wire     & wb\_wreg\_en\_o    & 通用寄存器组写使能信号     & 1           \\
+    output   & wire     & wb\_wreg\_addr\_o  & 通用寄存器组写地址端口     & `RegAddrBus \\
+    output   & wire     & wb\_wreg\_data\_o  & 通用寄存器组写数据端口     & `RegDataBus \\
+    \bottomrule
 \end{tabular}\\
 \\
-本模块为五级流水线中的mem-wb模块，也是流水线的\textbf{最后一级}。其作为通用寄存器组，输出既可以发送到regfile并写入数据和地址，也可以发送到id模块直接提供数据和地址。使得整个流水线成为一个可反馈的循环网络。
+本模块为五级流水线中的mem\_wb模块, 也是流水线的\textbf{最后一级}. 其作为通用寄存器组, 输出既可以发送到regfile并写入数据和地址, 也可以发送到id模块直接提供数据和地址. 使得整个流水线成为一个可反馈的循环网络. 
 
 \subsubsection{regfile}
 \begin{tabular}{cclll}
-	\toprule
-	I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-	\midrule
-	input &wire& clk & 时钟信号 & 1 \\
-	input &wire& rst-n & 异步复位信号（低电平使能） & 1 \\
-	
-input &wire& r-addr1-i  & 通用寄存器返回地址一号端口 & `RegAddrBus  \\
-input &wire& r-addr2-i  & 通用寄存器返回地址二号端口 & `RegAddrBus  \\
-input &wire& w-en-i  & 通用寄存器写使能信号 & 1  \\
-input &wire& w-addr-i  & 通用寄存器写地址端口 & `RegAddrBus  \\
-input &wire& w-data-i  & 通用寄存器写数据端口 & `RegDataBus  \\
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称    & 端口说明                   & 端口位宽    \\
+    \midrule
+    input    & wire     & clk         & 时钟信号                   & 1           \\
+    input    & wire     & rst\_n      & 异步复位信号（低电平使能） & 1           \\
 
-	
-	output &wire& r-data1-o & 通用寄存器输出数据一号端口    & `RegDataBus   \\
-	output &wire& r-data2-o & 通用寄存器输出数据二号端口    & `RegDataBus  \\
-	\bottomrule
+    input    & wire     & r\_addr1\_i & 通用寄存器返回地址一号端口 & `RegAddrBus \\
+    input    & wire     & r\_addr2\_i & 通用寄存器返回地址二号端口 & `RegAddrBus \\
+    input    & wire     & w\_en\_i    & 通用寄存器写使能信号       & 1           \\
+    input    & wire     & w\_addr\_i  & 通用寄存器写地址端口       & `RegAddrBus \\
+    input    & wire     & w\_data\_i  & 通用寄存器写数据端口       & `RegDataBus \\
+
+
+    output   & wire     & r\_data1\_o & 通用寄存器输出数据一号端口 & `RegDataBus \\
+    output   & wire     & r\_data2\_o & 通用寄存器输出数据二号端口 & `RegDataBus \\
+    \bottomrule
 \end{tabular}\\
 \\
-本模块为五级流水线的数据“数据中转站”--通用寄存器组。在此处加载诸多临时存放的数据，以供id模块使用。共有32个字长为32位的通用寄存器（x0~x31），其中x0寄存器中数据恒为0。对于数据的读取部分，采用组合逻辑描述，在最短的时间内读取到对应寄存器的数据。对于数据的写入部分，采用同步时序电路描述，类似于rom、ram、gpio的操作。具体的用途可见下页图3。
+本模块为五级流水线的数据“数据中转站”\_\_通用寄存器组. 在此处加载诸多临时存放的数据, 以供id模块使用. 共有32个字长为32位的通用寄存器（x0~x31）, 其中x0寄存器中数据恒为0. 对于数据的读取部分, 采用组合逻辑描述, 在最短的时间内读取到对应寄存器的数据. 对于数据的写入部分, 采用同步时序电路描述, 类似于rom、ram、gpio的操作. 具体的用途可见下页图3. 
 
 \begin{lstlisting}[language=verilog]
 assign r_data1_o = {`REG_DATA_W{~r1_x0}} & ((w_en_i && (r_addr1_i == w_addr_i))
@@ -468,133 +474,157 @@ assign r_data2_o = {`REG_DATA_W{~r2_x0}} & ((w_en_i && (r_addr2_i == w_addr_i))
  ? w_data_i : regfile[r_addr2_i]);
 
 \end{lstlisting}
-\begin{figure}
-	\centering
-	\includegraphics[width=0.7\linewidth]{1640076105(1)}
-	\caption{通用寄存器各部分用途}
-	\label{fig:16400761051}
-\end{figure}
+% \begin{figure}
+%     \centering
+%     \includegraphics[width=0.7\linewidth]{1640076105(1)}
+%     \caption{通用寄存器各部分用途}
+%     \label{fig:16400761051}
+% \end{figure}
+\begin{table}
+    \centering
+\begin{tabular}{llll}
+    \toprule
+    寄存器编号 & 寄存器别名 & 描述              & 保存者   \\
+    \midrule
+    x0         & zero       & 硬编码0           & /        \\
+    x1         & ra         & 返回地址          & 调用者   \\
+    x2         & sp         & 栈指针            & 被调用者 \\
+    x3         & gp         & 全局指针          & /        \\
+    x4         & tp         & 线程指针          & /        \\
+    x5-7       & t0-2       & 临时变量          & 调用者   \\
+    x8         & s0/sp      & 保存寄存器/栈指针 & 被调用者 \\
+    x9         & s1         & 保存寄存器        & 被调用者 \\
+    x10-11     & a0-1       & 函数入参/返回值   & 调用者   \\
+    x12-17     & a2-7       & 函数入参          & 调用者   \\
+    x18-27     & s2-11      & 保存寄存器        & 被调用者 \\
+    x28-31     & t3-6       & 临时变量          & 调用者   \\
+    \bottomrule
+\end{tabular}
+\caption{通用寄存器相关描述}
+\end{table}
 
-\subsubsection{gen-dffr / gen-dffsr }
+\subsubsection{gen\_dffr / gen\_dffsr }
 \begin{tabular}{cclll}
-	\toprule
-	I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-	\midrule
-	input &wire& clk & 时钟信号 & 1 \\
-	input &wire& rst-n & 异步复位信号（低电平使能） & 1 \\
-	input &wire& hold-i & 暂停信号       & 1   \\
-	input &wire& data-i  & 输入数据端口 & [WIDTH-1:0]  \\
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称 & 端口说明                   & 端口位宽     \\
+    \midrule
+    input    & wire     & clk      & 时钟信号                   & 1            \\
+    input    & wire     & rst\_n   & 异步复位信号（低电平使能） & 1            \\
+    input    & wire     & hold\_i  & 暂停信号                   & 1            \\
+    input    & wire     & data\_i  & 输入数据端口               & [WIDTH\_1:0] \\
 
-	output &wire& data-o  & 输出数据端口 & [WIDTH-1:0]  \\
-	\bottomrule
+    output   & wire     & data\_o  & 输出数据端口               & [WIDTH\_1:0] \\
+    \bottomrule
 \end{tabular}\\
 \\
-本模块为util（工具）类模块，在此处起到类D触发器的功能。
+本模块为util（工具）类模块, 在此处起到类D触发器的功能. 
 \subsection{外设模块}
 \subsubsection{biu}
 \begin{tabular}{cclll}
-	\toprule
-	I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-	\midrule
-	input &wire& mem-addr-i & 内存访问地址端口 & `MemAddrBus \\
-	input &wire& wmem-data-i & 内存写数据输入端口 & `WordBus  \\
-	input &wire& ram-data-i & ram读取数据输入端口 & `MemDataBus  \\
-	input &wire& gpio-data-i & gpio读取数据输入端口 & `MemDataBus  \\
-		
-	output &wire& gpio-en-o &   gpio选择使能信号  & 1  \\
-	output &wire& rmem-data-o & 内存读数据输出端口    & `MemDataBus  \\
-	\bottomrule
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称      & 端口说明             & 端口位宽    \\
+    \midrule
+    input    & wire     & mem\_addr\_i  & 内存访问地址端口     & `MemAddrBus \\
+    input    & wire     & wmem\_data\_i & 内存写数据输入端口   & `WordBus    \\
+    input    & wire     & ram\_data\_i  & ram读取数据输入端口  & `MemDataBus \\
+    input    & wire     & gpio\_data\_i & gpio读取数据输入端口 & `MemDataBus \\
+
+    output   & wire     & gpio\_en\_o   & gpio选择使能信号     & 1           \\
+    output   & wire     & rmem\_data\_o & 内存读数据输出端口   & `MemDataBus \\
+    \bottomrule
 \end{tabular}\\
 \\
-本模块是外设模块中的\textbf{核心biu模块}，为组合逻辑电路，该模块可以对外设（ram，gpio）起到选择作用.根据输入的内存访问地址端口，可以使ram-en-o或者gpio-en-o使能，选择对应的外设。\textbf{写操作：}写数据及写地址都已经由mem提供到各个外设模块。\textbf{读操作：}对应的选择信号使能后，将对应的外设输入的读数据通过biu输出回core-top模块。
+本模块是外设模块中的\textbf{核心biu模块}, 为组合逻辑电路, 该模块可以对外设（ram, gpio）起到选择作用.根据输入的内存访问地址端口, 可以使ram\_en\_o或者gpio\_en\_o使能, 选择对应的外设. \textbf{写操作：}写数据及写地址都已经由mem提供到各个外设模块. \textbf{读操作：}对应的选择信号使能后, 将对应的外设输入的读数据通过biu输出回core\_top模块. 
 
 \subsubsection{gpio}
 \begin{tabular}{cclll}
-	\toprule
-	I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-	\midrule
-	input &wire& clk & 时钟信号 & 1 \\
-	input &wire& rst-n & 异步复位信号（低电平使能） & 1 \\
-	input &wire& en-i & 使能选择信号       & 1   \\
-	
-	input &wire& r-en-i & 读使能信号 & 1 \\
-	input &wire& addr-i & 访问地址输入端口 & `MemAddrBus  \\
-	input &wire& w-en-i & 写使能信号 & 1 \\
-	input &wire& w-data-i & 写数据输入端口 & `MemDataBus  \\
-	input &wire& pin-sw-i & 外部输入开关信号 & [15:0]  \\
-	
-	output &wire& r-data-o &   读数据输出端口  & `MemDataBus  \\
-	output &wire& pin-seg-o &   七段数码管显示输出端口  & 7:0 \\
-	output &wire& pin-seg-sel-o &   七段数码管选通输出端口  & 3:0  \\
-	output &wire& pin-led-o &  流水灯显示输出端口  & 15:0  \\
-	\bottomrule
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称         & 端口说明                   & 端口位宽    \\
+    \midrule
+    input    & wire     & clk              & 时钟信号                   & 1           \\
+    input    & wire     & rst\_n           & 异步复位信号（低电平使能） & 1           \\
+    input    & wire     & en\_i            & 使能选择信号               & 1           \\
+
+    input    & wire     & r\_en\_i         & 读使能信号                 & 1           \\
+    input    & wire     & addr\_i          & 访问地址输入端口           & `MemAddrBus \\
+    input    & wire     & w\_en\_i         & 写使能信号                 & 1           \\
+    input    & wire     & w\_data\_i       & 写数据输入端口             & `MemDataBus \\
+    input    & wire     & pin\_sw\_i       & 外部输入开关信号           & [15:0]      \\
+
+    output   & wire     & r\_data\_o       & 读数据输出端口             & `MemDataBus \\
+    output   & wire     & pin\_seg\_o      & 七段数码管显示输出端口     & 7:0         \\
+    output   & wire     & pin\_seg\_sel\_o & 七段数码管选通输出端口     & 3:0         \\
+    output   & wire     & pin\_led\_o      & 流水灯显示输出端口         & 15:0        \\
+    \bottomrule
 \end{tabular}\\
 \\
-本模块为外设部分中的\textbf{GPIO}（General-purpose input/output）模块，其中，按键开关信息由外部直接读入，无法写入，但七段数码管的显示、选通以及流水灯可以实现写入和读取。选择不同的外设，从而使得能够将计算的结果输出显示。
+本模块为外设部分中的\textbf{GPIO}（General\_purpose input/output）模块, 其中, 按键开关信息由外部直接读入, 无法写入, 但七段数码管的显示、选通以及流水灯可以实现写入和读取. 选择不同的外设, 从而使得能够将计算的结果输出显示. 
 
 \subsubsection{ram}
 \begin{tabular}{cclll}
-	\toprule
-	I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-	\midrule
-	input &wire& clk & 时钟信号 & 1 \\
-	input &wire& rst-n & 异步复位信号（低电平使能） & 1 \\
-	
-	input &wire& addr-i & 访问地址输入端口 & `MemAddrBus  \\
-	input &wire& w-en-i & 写使能信号 & 1 \\
-	input &wire& w-data-i & 写数据输入端口 & `WordBus  \\
-	input &wire& w-sel-i & 字节选择信号 & [3:0]  \\
-	
-	output &wire& r-data-o &   读数据输出端口  & `WordBus  \\
-	\bottomrule
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称   & 端口说明                   & 端口位宽    \\
+    \midrule
+    input    & wire     & clk        & 时钟信号                   & 1           \\
+    input    & wire     & rst\_n     & 异步复位信号（低电平使能） & 1           \\
+
+    input    & wire     & addr\_i    & 访问地址输入端口           & `MemAddrBus \\
+    input    & wire     & w\_en\_i   & 写使能信号                 & 1           \\
+    input    & wire     & w\_data\_i & 写数据输入端口             & `WordBus    \\
+    input    & wire     & w\_sel\_i  & 字节选择信号               & [3:0]       \\
+
+    output   & wire     & r\_data\_o & 读数据输出端口             & `WordBus    \\
+    \bottomrule
 \end{tabular}\\
 \\
-此为外设部分中的\textbf{ram}模块，每一次读写操作对四个字节（即一个字）去操作。
-亮点：可对一个字中的任意几个字节进行写操作，从而实现对内存中单个或多个字节的修改，但同时读取时以字为单位进行读取。
+此为外设部分中的\textbf{ram}模块, 每一次读写操作对四个字节（即一个字）去操作. 
+亮点：可对一个字中的任意几个字节进行写操作, 从而实现对内存中单个或多个字节的修改, 但同时读取时以字为单位进行读取. 
 
 \subsubsection{rom}
 \begin{tabular}{cclll}
-	\toprule
-	I/O 端口 & 端口类型 &端口名称&端口说明 &端口位宽\\
-	\midrule
-	input &wire& clk & 时钟信号 & 1 \\
-	input &wire& rst-n & 异步复位信号（低电平使能） & 1 \\
-	
-	input &wire& r-addr-i & 访问地址输入端口 & `MemAddrBus  \\
-	input &wire& w-en-i & 写使能信号 & 1 \\
-	input &wire& w-addr-i & 访问地址输入端口 & `MemAddrBus  \\
-	input &wire& w-data-i & 写数据输入端口 & `WordBus  \\
-	input &wire& w-sel-i & 字节选择信号 & [3:0]  \\
-	
-	output &wire& r-data-o &   读数据输出端口  & `WordBus  \\
-	\bottomrule
+    \toprule
+    I/O 端口 & 端口类型 & 端口名称   & 端口说明                   & 端口位宽    \\
+    \midrule
+    input    & wire     & clk        & 时钟信号                   & 1           \\
+    input    & wire     & rst\_n     & 异步复位信号（低电平使能） & 1           \\
+
+    input    & wire     & r\_addr\_i & 访问地址输入端口           & `MemAddrBus \\
+    input    & wire     & w\_en\_i   & 写使能信号                 & 1           \\
+    input    & wire     & w\_addr\_i & 访问地址输入端口           & `MemAddrBus \\
+    input    & wire     & w\_data\_i & 写数据输入端口             & `WordBus    \\
+    input    & wire     & w\_sel\_i  & 字节选择信号               & [3:0]       \\
+
+    output   & wire     & r\_data\_o & 读数据输出端口             & `WordBus    \\
+    \bottomrule
 \end{tabular}\\
 \\
-此为外设部分中的\textbf{rom}模块，每一次读写操作对四个字节（即一个字）去操作。
-注意：此处关于rom的所有写端口在正常工作时全部置于低电平，内部存储的为指令信息， 借助
+此为外设部分中的\textbf{rom}模块, 每一次读写操作对四个字节（即一个字）去操作. 
+注意：此处关于rom的所有写端口在正常工作时全部置于低电平, 内部存储的为指令信息,  借助
 \begin{lstlisting}[language=verilog]
 initial begin
 $readmemh("E:/honorwork/CPU/Buceros/tests/examples/led.mem", _rom);
 end
 \end{lstlisting}
-代码读入对应的汇编代码。
+代码读入对应的汇编代码. 
 
 \subsubsection{地址分配}
 \begin{table}[h!]
     \centering
     \begin{tabular}{cclll}
         \toprule
-        可用地址空间 & 实际占用地址空间 & 设备 & 类型 & 容量\\
+        可用地址空间                           & 实际占用地址空间                       & 设备                 & 类型  & 容量  \\
         \midrule
-        \texttt{0x0000\_0000 --- 0x1fff\_ffff} & \texttt{0x0000\_0000 --- 0x0000\_ffff} & 指令存储器(ROM) & 只读* & 64KB\\
-        \texttt{0x2000\_0000 --- 0x3fff\_ffff} & \texttt{0x2000\_0000 --- 0x2000\_ffff} & 数据存储器(RAM) & 读/写 & 64KB\\
-        \texttt{0x4000\_0000 --- 0x5fff\_ffff} & \texttt{0x4000\_0000 --- 0x4000\_0001} & GPIO(LED)       & 读/写 & 2Byte \\
+        \texttt{0x0000\_0000 --- 0x1fff\_ffff} & \texttt{0x0000\_0000 --- 0x0000\_ffff} & 指令存储器(ROM)      & 只读* & 64KB  \\
+        \texttt{0x2000\_0000 --- 0x3fff\_ffff} & \texttt{0x2000\_0000 --- 0x2000\_ffff} & 数据存储器(RAM)      & 读/写 & 64KB  \\
+        \texttt{0x4000\_0000 --- 0x5fff\_ffff} & \texttt{0x4000\_0000 --- 0x4000\_0001} & GPIO(LED)            & 读/写 & 2Byte \\
         \texttt{0x4000\_0000 --- 0x5fff\_ffff} & \texttt{0x4000\_0004 --- 0x4000\_0005} & GPIO(七段数码管显示) & 读/写 & 2Byte \\
         \texttt{0x4000\_0000 --- 0x5fff\_ffff} & \texttt{0x4000\_0008 --- 0x4000\_0008} & GPIO(七段数码管选通) & 读/写 & 1Byte \\
-        \texttt{0x4000\_0000 --- 0x5fff\_ffff} & \texttt{0x5000\_0000 --- 0x5000\_0001} & GPIO(开关)       & 只读  & 2Byte \\
+        \texttt{0x4000\_0000 --- 0x5fff\_ffff} & \texttt{0x5000\_0000 --- 0x5000\_0001} & GPIO(开关)           & 只读  & 2Byte \\
         \bottomrule
     \end{tabular}
 \end{table}
+\section{编译器}
+
 \section{测试实验}
 \section{不足及总结}
 

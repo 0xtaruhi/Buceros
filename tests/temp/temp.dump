@@ -38,24 +38,29 @@ Disassembly of section .text:
   60:	fe010113          	addi	sp,sp,-32
   64:	00812e23          	sw	s0,28(sp)
   68:	02010413          	addi	s0,sp,32
-  6c:	fe042423          	sw	zero,-24(s0)
-  70:	fe042623          	sw	zero,-20(s0)
-  74:	0200006f          	j	94 <main+0x34>
-  78:	fe842703          	lw	a4,-24(s0)
-  7c:	fec42783          	lw	a5,-20(s0)
-  80:	00f707b3          	add	a5,a4,a5
-  84:	fef42423          	sw	a5,-24(s0)
-  88:	fec42783          	lw	a5,-20(s0)
-  8c:	00178793          	addi	a5,a5,1
+  6c:	00100793          	li	a5,1
+  70:	fef42623          	sw	a5,-20(s0)
+  74:	fec42783          	lw	a5,-20(s0)
+  78:	00179793          	slli	a5,a5,0x1
+  7c:	fef42623          	sw	a5,-20(s0)
+  80:	fec42703          	lw	a4,-20(s0)
+  84:	000107b7          	lui	a5,0x10
+  88:	00f71663          	bne	a4,a5,94 <main+0x34>
+  8c:	00100793          	li	a5,1
   90:	fef42623          	sw	a5,-20(s0)
-  94:	fec42703          	lw	a4,-20(s0)
-  98:	06400793          	li	a5,100
-  9c:	fce7dee3          	bge	a5,a4,78 <main+0x18>
-  a0:	00000793          	li	a5,0
-  a4:	00078513          	mv	a0,a5
-  a8:	01c12403          	lw	s0,28(sp)
-  ac:	02010113          	addi	sp,sp,32
-  b0:	00008067          	ret
+  94:	400007b7          	lui	a5,0x40000
+  98:	fec42703          	lw	a4,-20(s0)
+  9c:	00e7a023          	sw	a4,0(a5) # 40000000 <__global_pointer$+0x1ffff800>
+  a0:	fe042423          	sw	zero,-24(s0)
+  a4:	0100006f          	j	b4 <main+0x54>
+  a8:	fe842783          	lw	a5,-24(s0)
+  ac:	00178793          	addi	a5,a5,1
+  b0:	fef42423          	sw	a5,-24(s0)
+  b4:	fe842703          	lw	a4,-24(s0)
+  b8:	0007a7b7          	lui	a5,0x7a
+  bc:	12078793          	addi	a5,a5,288 # 7a120 <__stack_size+0x72120>
+  c0:	fef714e3          	bne	a4,a5,a8 <main+0x48>
+  c4:	fb1ff06f          	j	74 <main+0x14>
 
 Disassembly of section .stack:
 
@@ -67,26 +72,23 @@ Disassembly of section .comment:
 00000000 <.comment>:
    0:	3a434347          	fmsub.d	ft6,ft6,ft4,ft7,rmm
    4:	2820                	fld	fs0,80(s0)
-   6:	20554e47          	fmsub.s	ft8,fa0,ft5,ft4,rmm
-   a:	434d                	li	t1,19
-   c:	2055                	jal	b0 <main+0x50>
-   e:	6345                	lui	t1,0x11
-  10:	696c                	flw	fa1,84(a0)
-  12:	7370                	flw	fa2,100(a4)
-  14:	2065                	jal	bc <_data_lma+0x8>
-  16:	4952                	lw	s2,20(sp)
-  18:	562d4353          	0x562d4353
-  1c:	4520                	lw	s0,72(a0)
-  1e:	626d                	lui	tp,0x1b
-  20:	6465                	lui	s0,0x19
-  22:	6564                	flw	fs1,76(a0)
-  24:	2064                	fld	fs1,192(s0)
-  26:	2c434347          	0x2c434347
-  2a:	3620                	fld	fs0,104(a2)
-  2c:	2d34                	fld	fa3,88(a0)
-  2e:	6962                	flw	fs2,24(sp)
-  30:	2974                	fld	fa3,208(a0)
-  32:	3820                	fld	fs0,112(s0)
-  34:	322e                	fld	ft4,232(sp)
-  36:	302e                	fld	ft0,232(sp)
+   6:	5078                	lw	a4,100(s0)
+   8:	6361                	lui	t1,0x18
+   a:	4e47206b          	0x4e47206b
+   e:	2055                	jal	b2 <main+0x52>
+  10:	4952                	lw	s2,20(sp)
+  12:	562d4353          	0x562d4353
+  16:	4520                	lw	s0,72(a0)
+  18:	626d                	lui	tp,0x1b
+  1a:	6465                	lui	s0,0x19
+  1c:	6564                	flw	fs1,76(a0)
+  1e:	2064                	fld	fs1,192(s0)
+  20:	20434347          	fmsub.s	ft6,ft6,ft4,ft4,rmm
+  24:	3878                	fld	fa4,240(s0)
+  26:	5f36                	lw	t5,108(sp)
+  28:	3436                	fld	fs0,360(sp)
+  2a:	2029                	jal	34 <_start+0x34>
+  2c:	3031                	jal	fffff838 <__global_pointer$+0xdffff038>
+  2e:	322e                	fld	ft4,232(sp)
+  30:	302e                	fld	ft0,232(sp)
 	...

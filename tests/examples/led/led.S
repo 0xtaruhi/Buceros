@@ -1,19 +1,20 @@
-li t0, 0x40000000
-# li t0, 0x00000000
-li t1, 0
-li t2, 1000000
-# li t2, 2
-li t3, 1
-li t4, 0x00010000
-1:
-addi t1, t1, 1
-bne t1, t2, 1b
-li t1, 0
-slli t3, t3, 1
-beq t3, t4, 2f
-3:
-sw t3, 0(t0)
-j  1b
-2:
-li t3, 1
-j  3b
+addi	sp,sp,-32
+sw	s0,28(sp)
+addi	s0,sp,32
+# li	a5,536870912
+li  a5, 0
+sw	a5,-20(s0)
+li	a5,123
+sw	a5,-24(s0)
+lw	a5,-20(s0)
+addi	a4,a5,4
+sw	a4,-20(s0)
+lw	a3,-24(s0)
+li	a4,10
+div	a4,a3,a4
+sw	a4,0(a5)
+li	a5,0
+mv	a0,a5
+lw	s0,28(sp)
+addi	sp,sp,32
+jr	ra
