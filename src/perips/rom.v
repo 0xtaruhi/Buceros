@@ -24,13 +24,13 @@ module rom
     output wire [   `WordBus] r_data_o
 );
 
-    (* ram_style = "block" *) reg  [`WordBus] _rom [0:ROM_DEPTH-1];
+    reg  [`WordBus] _rom [0:ROM_DEPTH-1];
     wire [ROM_DEPTH_BIT_LEN-1:0] r_idx;
     wire [ROM_DEPTH_BIT_LEN-1:0] w_idx;
     integer i;
 
     initial begin
-        $readmemh("D:/fpga/project/Buceros/tests/examples/led/led.mem", _rom);
+        $readmemh("E:/honorwork/CPU/Buceros/tests/examples/led.mem", _rom);
     end
     
     assign r_idx = r_addr_i[ROM_DEPTH_BIT_LEN+1:2];
