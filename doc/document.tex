@@ -6,6 +6,8 @@
 \usepackage{lmodern}
 \usepackage{color}
 
+\setmonofont{Consolas}
+
 \title{Buceros: 一个简单的RISC-V SOC}
 \author{张政镒 \\ 20300750021 \and 李少群 \\ 20300750018 \and 王彬 \\ 20300750019}
 \institute{\href{https://github.com/0xtaruhi/Buceros}{Github项目链接}}
@@ -64,10 +66,27 @@
 
 我们使用的GCC是由eclipse维护的, 使用的版本为xpack-riscv-none-embed-gcc-10.2.0-1.2. 
 
+\subsection{代码风格}
+
+为了保证每个人写的代码可以方便地被所有小组成员阅读，我们详细地制定了
+一系列的代码风格规范. 包括
+\begin{enumerate}
+\item 输入端口在结尾添加\_i标识符，输出端口在结尾添加\_o标识符.
+\item 大量使用宏定义，尽量不使用固定的数字，保留对64位架构的可拓展性.
+\item 宏定义中，固定的数字全部用大写，不同的单词用下划线隔开；位宽定义用大驼峰命名法.
+\item 同一组赋值等号、小括号中括号上下对齐，提高代码的美观性和可读性.
+\item 封装常用模块，尽量不直接使用时序always块，减小了代码密度.
+\item 所有的命名和注释都严格规范，不允许使用中文作注释.
+\item 同一个模块中，严格按照变量声明、时序逻辑块、组合逻辑块、输出逻辑的顺序编写.
+\item 全部使用Verilog2001中的端口声明方式. 
+\end{enumerate}
+
 \subsection{项目管理}
 
 本次实验全程使用git进行代码管理, 并且将改动实时同步到GitHub上. 本次CPU的代码是完全开源的, 任何人都可以看到我们写的内容, 
 甚至为我们提交一些更改. 
+
+项目地址：https://github.com/0xtaruhi/Buceros
 
 \section{CPU各模块实现方式及亮点特色}
 \subsection{core\_top核心模块}
@@ -110,8 +129,7 @@
 		assign stall_o[1] = stallreq_id_ex_i;   // to if_id
 		assign stall_o[2] = stallreq_id_ex_i;   // to id_ex
 		assign stall_o[3] = 1'b0;               // to ex_mem
-		assign stall_o[4] = stallreq_id_ex_i;   // to mem_wb
-		// assign stall_o[5] = stallreq_id_ex_i;   // to regfile
+		assign stall_o[4] = 1'b0;               // to mem_wb
 	\end{lstlisting}
 \subsubsection{pc\_reg}
 \begin{tabular}{cclll}
@@ -132,10 +150,10 @@
     always @(posedge clk or negedge rst_n) begin
 		if(~rst_n) begin
 			pc_o <= `PC_RST_ADDR;
+        end else if(hold_i) begin
+			pc_o <= pc_o;
 		end else if(jmp_en_i) begin
 			pc_o <= jmp_addr_i;
-		end else if(hold_i) begin
-			pc_o <= pc_o;
 		end else begin
 			pc_o <= pc_o + 32'd4;
 		end
@@ -157,7 +175,10 @@
     \bottomrule
 \end{tabular}\\
 \\
-此为取指/译码寄存器组, 也为流水线的\textbf{第二级}, 将从ROM中提取出来的命令预置在其中, 并将命令地址一同传递下去. 值得注意的是, 当复位使能或跳转信号使能时, 将inst—o设置为`nop指令, 即“addi x0,x0,0”,通过自增0来表示这是一个空指令, 即在跳转指令输入之前先加载一个空指令以实现立即跳转, 不执行其他指令的功能. 
+此为取指/译码寄存器组, 也为流水线的\textbf{第二级}, 将从ROM中提取出来的命令预置在其中, 
+并将命令地址一同传递下去. 值得注意的是, 当复位使能或跳转信号使能时, 将inst\_o设置为NOP指令, 
+即“addi x0,x0,0”,通过自增0来表示这是一个空指令, 即在跳转指令输入之前先加
+载一个空指令以实现立即跳转, 不执行其他指令的功能. 
 
 \subsubsection{id}
 \begin{tabular}{cclll}
@@ -227,6 +248,16 @@ assign imm_o = {`IMM_W{inst_type_I}} & {{20{inst_i[31]}}, inst_i[31:20]} |
 	 inst_i[20], inst_i[30:21], 1'b0};
 \end{lstlisting}
 注意：只有我们通用寄存器组一号地址端口的访问地址与ex、mem、wb输出地址相匹配时, id才会提前读取ex、mem、wb这三个端口中的数据
+\textbf{亮点三}：我们尽可能地少利用LUT资源，例如我们在译码阶段只使用了一个31bit的比较器
+就实现了无符号数比较和有符号数比较.
+
+\begin{lstlisting}[language=verilog]
+assign rs_diff_signed = rs1_data_o[`REG_DATA_W-1] ^ rs2_data_o[`REG_DATA_W-1];
+assign rs1_ltu_rs2_exclude_msb = rs1_data_o[`REG_DATA_W-2:0] < rs2_data_o[`REG_DATA_W-2:0];
+assign rs1_ltu_rs2 = rs_diff_signed ? rs2_data_o[`REG_DATA_W-1] : rs1_ltu_rs2_exclude_msb;
+assign rs1_lt_rs2  = rs_diff_signed ? rs1_data_o[`REG_DATA_W-1] : rs1_ltu_rs2_exclude_msb;
+\end{lstlisting}
+
 \subsubsection{id\_ex}
 \begin{tabular}{cclll}
     \toprule
@@ -382,10 +413,10 @@ always @ (*) begin
 	if (wmem_en_i) begin
 		case (funct3_i)
 			`INST_BYTE: begin
-				wmem_data_r = {{(`ROM_WIDTH \_ `BYTE_WIDTH){1'b0}},wreg_data_i[`BYTE_WIDTH \_ 1:0]};
+				wmem_data_r = {{(`ROM_WIDTH - `BYTE_WIDTH){1'b0}},wreg_data_i[`BYTE_WIDTH - 1:0]};
 			end
 			`INST_HALF_WORD: begin
-				wmem_data_r = {{(`ROM_WIDTH \_ `HALF_WORD_WIDTH){1'b0}},wreg_data_i[`HALF_WORD_WIDTH \_ 1:0]};
+				wmem_data_r = {{(`ROM_WIDTH - `HALF_WORD_WIDTH){1'b0}},wreg_data_i[`HALF_WORD_WIDTH - 1:0]};
 			end
 			`INST_WORD: begin
 				wmem_data_r = wreg_data_i; // not extended to ARCH_RV64, so the code has been simplified
@@ -399,19 +430,19 @@ always @ (*) begin
 		wmem_data_r = `ZERO_WORD;
 		case (funct3_i)
 			`INST_BYTE: begin
-				wreg_data_r = {{(`ROM_WIDTH \_ `BYTE_WIDTH){rmem_data_i[`BYTE_WIDTH \_ 1]}},rmem_data_i[`BYTE_WIDTH \_ 1:0]};
+				wreg_data_r = {{(`ROM_WIDTH - `BYTE_WIDTH){rmem_data_i[`BYTE_WIDTH - 1]}},rmem_data_i[`BYTE_WIDTH - 1:0]};
 			end
 			`INST_HALF_WORD: begin
-				wreg_data_r = {{(`ROM_WIDTH \_ `HALF_WORD_WIDTH){rmem_data_i[`HALF_WORD_WIDTH \_ 1]}},rmem_data_i[`HALF_WORD_WIDTH \_ 1]};
+				wreg_data_r = {{(`ROM_WIDTH - `HALF_WORD_WIDTH){rmem_data_i[`HALF_WORD_WIDTH - 1]}},rmem_data_i[`HALF_WORD_WIDTH - 1]};
 			end
 			`INST_WORD: begin
 				wreg_data_r = rmem_data_i; // not extended to ARCH_RV64, so the code has been simplified
 			end
 			`INST_BYTE_U: begin
-				wreg_data_r = {{(`ROM_WIDTH \_ `BYTE_WIDTH){1'b0}},rmem_data_i[`BYTE_WIDTH \_ 1:0]};
+				wreg_data_r = {{(`ROM_WIDTH - `BYTE_WIDTH){1'b0}},rmem_data_i[`BYTE_WIDTH - 1:0]};
 			end
 			`INST_HALF_WORD_U: begin
-				wreg_data_r = {{(`ROM_WIDTH \_ `HALF_WORD_WIDTH){1'b0}},rmem_data_i[`HALF_WORD_WIDTH \_ 1]};
+				wreg_data_r = {{(`ROM_WIDTH - `HALF_WORD_WIDTH){1'b0}},rmem_data_i[`HALF_WORD_WIDTH - 1]};
 			end
 			default: begin
 				wreg_data_r = `ZERO_WORD;
@@ -613,8 +644,8 @@ end
         \toprule
         可用地址空间                           & 实际占用地址空间                       & 设备                 & 类型  & 容量  \\
         \midrule
-        \texttt{0x0000\_0000 --- 0x1fff\_ffff} & \texttt{0x0000\_0000 --- 0x0000\_ffff} & 指令存储器(ROM)      & 只读* & 64KB  \\
-        \texttt{0x2000\_0000 --- 0x3fff\_ffff} & \texttt{0x2000\_0000 --- 0x2000\_ffff} & 数据存储器(RAM)      & 读/写 & 64KB  \\
+        \texttt{0x0000\_0000 --- 0x1fff\_ffff} & \texttt{0x0000\_0000 --- 0x0000\_07ff} & 指令存储器(ROM)      & 只读* & 1KB  \\
+        \texttt{0x2000\_0000 --- 0x3fff\_ffff} & \texttt{0x2000\_0000 --- 0x2000\_07ff} & 数据存储器(RAM)      & 读/写 & 1KB  \\
         \texttt{0x4000\_0000 --- 0x5fff\_ffff} & \texttt{0x4000\_0000 --- 0x4000\_0001} & GPIO(LED)            & 读/写 & 2Byte \\
         \texttt{0x4000\_0000 --- 0x5fff\_ffff} & \texttt{0x4000\_0004 --- 0x4000\_0005} & GPIO(七段数码管显示) & 读/写 & 2Byte \\
         \texttt{0x4000\_0000 --- 0x5fff\_ffff} & \texttt{0x4000\_0008 --- 0x4000\_0008} & GPIO(七段数码管选通) & 读/写 & 1Byte \\
@@ -624,7 +655,137 @@ end
 \end{table}
 \section{编译器}
 
+\subsection{Makefile文件}
+
+我们利用了make这一工具进行编译. 编译完成后会产生.bin .dump .mem .o 四个文件.
+
+
+\subsection{链接文件}
+
+链接文件中指定了程序各个部分所在的位置. 在链接文件的一开头就有如下两句：
+
+\begin{lstlisting}
+MEMORY
+{
+    rom(wxa!ri) : ORIGIN = 0x00000000, LENGTH = 1K
+    ram(wxa!ri) : ORIGIN = 0x20000000, LENGTH = 1K
+}
+\end{lstlisting}
+这就指明了程序可用的rom和ram空间. 我们采用的是哈佛结构（在RISCV/ARM嵌入式结构中非常常见），
+随后即是各个section位置的说明. 特别要说明的是“栈空间”，在lds文件中时这么描述的：
+\begin{lstlisting}
+.stack ORIGIN(ram) + LENGTH(ram) - __stack_size :
+{
+    PROVIDE( _heap_end = . );
+    . = __stack_size;
+    PROVIDE( _sp = . );
+    __freertos_irq_stack_top = .;
+} >ram AT>ram
+\end{lstlisting}
+
+栈是负增长的，所以需要把初始栈指针\_sp设置在栈顶. 在入口汇编程序中需要用到这个值. 
+
+\begin{lstlisting}]
+    la sp, _sp
+\end{lstlisting}
+\subsection{从bin转到mem}
+
+由于编译出来的文件是bin格式的二进制文件，我们使用了Python程序将bin转换为mem. 
+
+程序如下\lstinputlisting[language=python]{../tests/bin2mem.py}
+
+\subsection{编译}
+
+编译非常简单，在配置好环境之后，cd到程序所在的文件夹(必须有Makefile文件)，然后输入
+\begin{lstlisting}[language=bash]
+make
+\end{lstlisting}
+就会自动在文件夹里生成一个mem文件.
 \section{测试实验}
+
+\section{我们解决的一些bug}
+
+\subsection{BUG1——运算符优先级}
+错误代码
+\begin{lstlisting}[language=verilog]
+assign result_sum   = rs1_data_i + (exe_sub ^ data2 + exe_sub);
+\end{lstlisting}
+
+正确代码
+\begin{lstlisting}[language=verilog]
+assign result_sum   = rs1_data_i + (({`REG_DATA_W{exe_sub}} ^ data2) + exe_sub);
+\end{lstlisting}
+
+\subsection{BUG2——流水线吞指令}
+错误代码
+\begin{lstlisting}[language=verilog]
+assign stall_o[0] = stallreq_id_ex_i;   // to pc_reg
+assign stall_o[1] = stallreq_id_ex_i;   // to if_id
+assign stall_o[2] = stallreq_id_ex_i;   // to id_ex
+assign stall_o[3] = 1'b0;               // to ex_mem
+assign stall_o[4] = stallreq_id_ex_i;
+\end{lstlisting}
+
+正确代码
+\begin{lstlisting}[language=verilog]
+assign stall_o[0] = stallreq_id_ex_i;   // to pc_reg
+assign stall_o[1] = stallreq_id_ex_i;   // to if_id
+assign stall_o[2] = stallreq_id_ex_i;   // to id_ex
+assign stall_o[3] = 1'b0;               // to ex_mem
+assign stall_o[4] = 1'b0;
+\end{lstlisting}
+
+\subsection{BUG3——PC寄存器的hold与jump}
+
+错误代码
+\begin{lstlisting}[language=verilog]
+always @(posedge clk or negedge rst_n) begin
+    if(~rst_n) begin
+        pc_o <= `PC_RST_ADDR;
+    end else if(jmp_en_i) begin
+        pc_o <= jmp_addr_i;
+    end else if(hold_i) begin
+        pc_o <= pc_o;
+    end else begin
+        pc_o <= pc_o + 32'd4;
+    end
+end
+\end{lstlisting}
+
+正确代码
+\begin{lstlisting}[language=verilog]
+always @(posedge clk or negedge rst_n) begin
+    if(~rst_n) begin
+        pc_o <= `PC_RST_ADDR;
+    end else if(hold_i) begin
+        pc_o <= pc_o;
+    end else if(jmp_en_i) begin
+        pc_o <= jmp_addr_i;
+    end else begin
+        pc_o <= pc_o + 32'd4;
+    end
+end
+\end{lstlisting}
+
+\section{一些问题和自己的思考}
+
+\subsection{为什么我们不做VGA显示？}
+
+VGA显示需要使用自己的频率. 一方面我们不希望把VGA模块用Verilog写死，
+而是希望通过程序的方式进行实现，否则就违背了做一个“CPU”的初衷，之后
+在调节主频的时候也会出现问题. 我们希望CPU的频率是灵活可调节的.
+
 \section{不足及总结}
+
+\subsection{架构设计失误}
+
+我们将所有的读取做成了组合逻辑，后续证明我们的频率之所以上不去，
+就是因为mem的读取延迟过大. 我们当时应该采用时序逻辑的做法，
+这样可以显著地减少建立时间，大大提高我们CPU的主频.
+
+同时将ram和rom做成时序逻辑还可以调用板上的bram资源. 我们当时开始时
+预想的ram和rom各有64K的大小，但是最后只实现了各1K的大小. 一方面，由于不能
+使用bram资源，所有的存储都是用lut资源实现的，这使得综合非常缓慢. 另一方面，
+及时只有1K的大小，也占用了18\%的lut资源，相比之下我们的cpu只用了4\%的lut资源.
 
 \end{document}
